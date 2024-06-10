@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import ru.skittens.goroute.ui.screens.admin.MainAdminScreen
 import ru.skittens.goroute.ui.screens.employee.MainEmployeeScreen
 import ru.skittens.goroute.ui.screens.start.authentication.AuthenticationScreen
+import ru.skittens.goroute.ui.screens.start.onboarding.OnboardingScreen
 import ru.skittens.goroute.ui.screens.start.registration.RegistrationScreen
 import ru.skittens.goroute.ui.screens.start.splash.SplashScreen
 import ru.skittens.goroute.ui.screens.tourist.MainTouristScreen
@@ -22,11 +23,16 @@ typealias NavigationFun = (Destinations) -> Unit
 
 @Composable
 fun App() {
-    GoRouteTheme {
+    //fixme set one background in splash -> registration screen
+    GoRouteTheme(false) {
         val navController = rememberNavController()
         NavHost(navController, Destinations.Authentication.name, Modifier.fillMaxSize()) {
             composable(Destinations.Splash){
                 SplashScreen(navController::navigate)
+            }
+
+            composable(Destinations.OnBoarding){
+                OnboardingScreen(navController::navigate)
             }
 
             composable(Destinations.Authentication) {
@@ -53,7 +59,9 @@ fun App() {
 }
 
 fun NavHostController.navigate(destinations: Destinations) {
-    navigate(destinations.name)
+    navigate(destinations.name){
+        this.launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.composable(

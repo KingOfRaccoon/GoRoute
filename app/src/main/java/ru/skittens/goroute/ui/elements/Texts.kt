@@ -82,103 +82,7 @@ fun AutoSizedText(
 }
 
 @Composable
-fun DisplayLargeText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.displayLarge,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun DisplayMediumText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.displayMedium,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun DisplaySmallText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.displaySmall,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun HeadlineLargeText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.headlineLarge,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun HeadlineMediumText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.headlineMedium,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun HeadlineSmallText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.headlineSmall,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun TitleLargeText(
+fun BigTitleText(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -194,7 +98,7 @@ fun TitleLargeText(
 }
 
 @Composable
-fun TitleMediumText(
+fun TitleText(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -210,23 +114,7 @@ fun TitleMediumText(
 }
 
 @Composable
-fun TitleSmallText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.titleSmall,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun BodyLargeText(
+fun ButtonText(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -239,7 +127,7 @@ fun BodyLargeText(
 }
 
 @Composable
-fun BodyMediumText(
+fun BodyText(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -255,36 +143,7 @@ fun BodyMediumText(
 }
 
 @Composable
-fun BodySmallText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier, text, style = MaterialTheme.typography.bodySmall, textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun LabelLargeText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.labelLarge,
-        textAlign = textAlign,
-        color = color
-    )
-}
-
-@Composable
-fun LabelMediumText(
+fun CaptionText(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
@@ -298,20 +157,3 @@ fun LabelMediumText(
         color = color
     )
 }
-
-@Composable
-fun LabelSmallText(
-    text: String,
-    modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    AutoSizedText(
-        modifier,
-        text,
-        style = MaterialTheme.typography.labelSmall,
-        textAlign = textAlign,
-        color = color
-    )
-}
-

@@ -9,47 +9,48 @@ import androidx.compose.ui.unit.sp
 import ru.skittens.goroute.R
 
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
-        fontWeight = FontWeight.Normal,
-        fontSize = 15.sp,
-        lineHeight = 15.sp,
-        letterSpacing = 0.5.sp
-    ),
-    bodyMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
-        fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 16.sp,
+    // BigTitle
+    titleLarge = TextStyle(
+        fontFamily = FontFamily(Font(R.font.jost)),
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        lineHeight = 28.6.sp,
         letterSpacing = 0.sp
     ),
 
-    titleLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
-        fontWeight = FontWeight.Normal,
+    // Title
+    titleMedium = TextStyle(
+        fontFamily = FontFamily(Font(R.font.jost)),
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 26.sp,
         letterSpacing = 0.sp
     ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
-        lineHeight = 23.sp,
-        letterSpacing = 0.sp
-    ),
-    titleSmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
-        fontWeight = FontWeight.Normal,
-        fontSize = 17.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.golos)),
+
+    // Button
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily(Font(R.font.jost)),
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
+        fontSize = 17.sp,
+        lineHeight = 22.1.sp,
+        letterSpacing = 0.5.sp
+    ),
+
+    // Body
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily(Font(R.font.jost)),
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+        lineHeight = 19.5.sp,
+        letterSpacing = 0.sp
+    ),
+
+    // Caption
+    labelMedium = TextStyle(
+        fontFamily = FontFamily(Font(R.font.jost)),
+        fontWeight = FontWeight.Medium,
+        fontSize = 13.sp,
+        lineHeight = 16.9.sp,
         letterSpacing = 0.5.sp
     )
 )

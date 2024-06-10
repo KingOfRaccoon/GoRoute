@@ -1,6 +1,33 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+//    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
+    id("com.vk.vkompose") version "0.5.4-k2"
+    id("com.vk.recompose-highlighter") version "0.5.4-k2"
+    id("com.vk.recompose-logger") version "0.5.4-k2"
+    id("com.vk.compose-test-tag-applier") version "0.5.4-k2"
+    id("com.vk.compose-test-tag-cleaner") version "0.5.4-k2"
+    id("com.vk.compose-test-tag-drawer") version "0.5.4-k2"
+    id("com.vk.compose-source-information-cleaner") version "0.5.4-k2"
+    id("com.vk.composable-skippability-checker") version "0.5.4-k2"
+}
+
+vkompose {
+    skippabilityCheck = true
+
+    recompose {
+        isHighlighterEnabled = true
+        isLoggerEnabled = true
+    }
+
+    testTag {
+        isApplierEnabled = true
+        isDrawerEnabled = true
+        isCleanerEnabled = true
+    }
+
+    sourceInformationClean = true
 }
 
 android {
@@ -27,6 +54,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -38,9 +66,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -72,4 +97,6 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.coil.compose)
     implementation(libs.gson)
+    implementation(libs.androidx.material.icons.extended)
+    implementation("com.vk.vkompose:detekt:0.5.4-k2")
 }

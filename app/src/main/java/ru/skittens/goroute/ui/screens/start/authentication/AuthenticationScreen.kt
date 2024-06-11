@@ -27,12 +27,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -51,6 +47,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import org.koin.compose.koinInject
+import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.BigTitleText
 import ru.skittens.goroute.ui.elements.ButtonText
@@ -66,6 +63,7 @@ fun AuthenticationScreen(
     displayMetrics: DpSize = koinInject(),
     viewModel: AuthenticationViewModel = koinInject()
 ) {
+    val user by viewModel.user.collectAsState()
     val context = LocalContext.current
 
     val width = displayMetrics.width
@@ -75,6 +73,16 @@ fun AuthenticationScreen(
         remember { ContextCompat.getDrawable(context, R.drawable.backgroung_onboarding) }
     val bitmap = remember { drawableToBitmap(imageDrawable!!) }
     val imageBitmap = bitmap.asImageBitmap()
+
+    LaunchedEffect(user) {
+        if (user is Resource.Success)
+            when (user.data?.role) {
+                "USER" -> navigateTo(Destinations.MainTourist)
+                "MODERATOR" -> navigateTo(Destinations.MainEmployee)
+                "ADMIN" -> navigateTo(Destinations.MainAdmin)
+                else -> navigateTo(Destinations.MainTourist)
+            }
+    }
 
     Scaffold(Modifier.fillMaxSize().drawBehind {
         val translationFactor = 0.3f // 15% shift per each page

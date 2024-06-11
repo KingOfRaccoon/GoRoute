@@ -79,7 +79,8 @@ class Postman {
     suspend inline fun <reified T> post(
         baseUrl: String,
         route: String,
-        body: Any?,
+        body: Any? = null,
+        token: String? = null,
         headers: Map<String, Any> = mapOf(),
         contentType: ContentType = Json,
     ): Resource<T> {
@@ -95,6 +96,8 @@ class Postman {
                     headers.forEach {
                         header(it.key, it.value)
                     }
+                    if (token != null)
+                        bearerAuth(token)
 
                     if (body != null)
                         setBody(body)

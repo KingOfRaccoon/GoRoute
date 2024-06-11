@@ -69,7 +69,6 @@ fun SplashScreen(
     var fractionWidth by remember { mutableFloatStateOf(0.1f) }
 
     val context = LocalContext.current
-
     val width = displayMetrics.width
     val height = displayMetrics.height
     val imageDrawable =
@@ -95,13 +94,12 @@ fun SplashScreen(
                 if (user is Resource.Success)
                     when(user.data?.role){
                         "USER" -> navigateTo(Destinations.MainTourist)
-                        "ADMIN" -> navigateTo(Destinations.MainAdmin)
                         "MODERATOR" -> navigateTo(Destinations.MainEmployee)
+                        "ADMIN" -> navigateTo(Destinations.MainAdmin)
                         else -> navigateTo(Destinations.MainTourist)
                     }
                 else if (user is Resource.Error)
                     navigateTo(Destinations.Authentication)
-            navigateTo(Destinations.OnBoarding)
         }
     }
 

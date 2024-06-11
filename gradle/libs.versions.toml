@@ -1,7 +1,6 @@
 [versions]
 agp = "8.2.2"
 coilCompose = "2.6.0"
-glassmorphicComposables = "0.0.7"
 gson = "2.10.1"
 koinVersion = "3.5.3"
 kotlin = "2.0.0"

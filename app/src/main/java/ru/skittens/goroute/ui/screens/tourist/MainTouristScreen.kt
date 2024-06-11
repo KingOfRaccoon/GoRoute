@@ -34,7 +34,9 @@ fun MainTouristScreen() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-
+            composable(Destinations.Map){
+                
+            }
         }
     }
 }

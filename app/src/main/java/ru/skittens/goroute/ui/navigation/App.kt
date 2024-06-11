@@ -26,7 +26,7 @@ fun App() {
     //fixme set one background in splash -> registration screen
     GoRouteTheme(false) {
         val navController = rememberNavController()
-        NavHost(navController, Destinations.Authentication.name, Modifier.fillMaxSize()) {
+        NavHost(navController, Destinations.Splash.name, Modifier.fillMaxSize()) {
             composable(Destinations.Splash){
                 SplashScreen(navController::navigate)
             }

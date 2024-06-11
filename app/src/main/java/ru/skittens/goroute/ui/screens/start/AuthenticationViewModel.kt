@@ -31,11 +31,12 @@ class AuthenticationViewModel(
 
     fun registrationUser() {
         viewModelScope.launch(Dispatchers.IO) {
+            val splitName = fullName.split(" ")
             userDataUseCase.registrationUser(
                 RegistrationUserData(
                     login,
-                    fullName.split(" ").firstOrNull().orEmpty(),
-                    fullName.split(" ").lastOrNull().orEmpty(),
+                    splitName.firstOrNull().orEmpty(),
+                    splitName.lastOrNull().orEmpty(),
                     password
                 )
             )

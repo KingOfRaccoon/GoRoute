@@ -11,8 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import org.koin.compose.koinInject
+import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
@@ -43,7 +43,8 @@ fun RegistrationScreen(
     navigateTo: NavigationFun,
     displayMetrics: DpSize = koinInject(),
     viewModel: AuthenticationViewModel = koinInject()
-){
+) {
+    val user by viewModel.user.collectAsState()
     val context = LocalContext.current
 
     val width = displayMetrics.width
@@ -54,28 +55,43 @@ fun RegistrationScreen(
     val bitmap = remember { drawableToBitmap(imageDrawable!!) }
     val imageBitmap = bitmap.asImageBitmap()
 
+    LaunchedEffect(user) {
+        if (user is Resource.Success)
+            when (user.data?.role) {
+                "USER" -> navigateTo(Destinations.MainTourist)
+                "MODERATOR" -> navigateTo(Destinations.MainEmployee)
+                "ADMIN" -> navigateTo(Destinations.MainAdmin)
+                else -> navigateTo(Destinations.MainTourist)
+            }
+    }
+
     Scaffold(
-        Modifier.fillMaxSize().drawBehind {
-        val translationFactor = 0.3f // 15% shift per each page
-        val translationX = 4 * size.width * translationFactor
-        drawIntoCanvas { canvas ->
-            canvas.drawImageRect(
-                image = imageBitmap,
-                srcOffset = IntOffset(translationX.toInt(), 0),
-                dstSize = IntSize(
-                    width.value.toInt() * (imageDrawable?.intrinsicWidth
-                        ?: 1) / (imageDrawable?.intrinsicHeight ?: 1) * 2,
-                    height.value.toInt()
-                ),
-                paint = Paint().apply {
-                    isAntiAlias = true
+        Modifier
+            .fillMaxSize()
+            .drawBehind {
+                val translationFactor = 0.3f // 15% shift per each page
+                val translationX = 4 * size.width * translationFactor
+                drawIntoCanvas { canvas ->
+                    canvas.drawImageRect(
+                        image = imageBitmap,
+                        srcOffset = IntOffset(translationX.toInt(), 0),
+                        dstSize = IntSize(
+                            width.value.toInt() * (imageDrawable?.intrinsicWidth
+                                ?: 1) / (imageDrawable?.intrinsicHeight ?: 1) * 2,
+                            height.value.toInt()
+                        ),
+                        paint = Paint().apply {
+                            isAntiAlias = true
+                        }
+                    )
                 }
-            )
-        }
-    },
+            },
         containerColor = Color.White.copy(.5f), topBar = { MainTitle("") }) {
         Column(
-            Modifier.fillMaxSize().padding(it).padding(horizontal = 18.dp),
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+                .padding(horizontal = 18.dp),
             Arrangement.spacedBy(18.dp),
             Alignment.CenterHorizontally
         ) {
@@ -83,7 +99,9 @@ fun RegistrationScreen(
             Image(
                 painterResource(R.drawable.logo_big),
                 null,
-                Modifier.fillMaxWidth(0.3f).aspectRatio(1f)
+                Modifier
+                    .fillMaxWidth(0.3f)
+                    .aspectRatio(1f)
             )
             Spacer(Modifier.height(90.dp))
 

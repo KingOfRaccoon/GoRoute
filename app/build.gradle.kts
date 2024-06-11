@@ -3,31 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 //    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
-    id("com.vk.vkompose") version "0.5.4-k2"
-    id("com.vk.recompose-highlighter") version "0.5.4-k2"
-    id("com.vk.recompose-logger") version "0.5.4-k2"
-    id("com.vk.compose-test-tag-applier") version "0.5.4-k2"
-    id("com.vk.compose-test-tag-cleaner") version "0.5.4-k2"
-    id("com.vk.compose-test-tag-drawer") version "0.5.4-k2"
-    id("com.vk.compose-source-information-cleaner") version "0.5.4-k2"
-    id("com.vk.composable-skippability-checker") version "0.5.4-k2"
-}
-
-vkompose {
-    skippabilityCheck = true
-
-    recompose {
-        isHighlighterEnabled = true
-        isLoggerEnabled = true
-    }
-
-    testTag {
-        isApplierEnabled = true
-        isDrawerEnabled = true
-        isCleanerEnabled = true
-    }
-
-    sourceInformationClean = true
 }
 
 android {
@@ -36,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.skittens.goroute"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -69,7 +44,8 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/kotlin/internal/internal.kotlin_builtins"
+            excludes += "/META-INF/*"
         }
     }
 }
@@ -98,5 +74,4 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.gson)
     implementation(libs.androidx.material.icons.extended)
-    implementation("com.vk.vkompose:detekt:0.5.4-k2")
 }

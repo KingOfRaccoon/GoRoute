@@ -74,4 +74,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.gson)
     implementation(libs.androidx.material.icons.extended)
+//    implementation("com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0")
+    implementation("com.mapbox.maps:android:11.4.1")
+// If you're using compose also add the compose extension
+    implementation("com.mapbox.extension:maps-compose:11.4.1")
+
 }

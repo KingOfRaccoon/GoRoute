@@ -17,7 +17,9 @@ class UserDataUseCase(private val userRepository: UserRepository) {
         userRepository.registrationUser(userData)
     }
 
-    suspend fun authenticationUserOnToken(userData: UserDataToken) {
-            userRepository.authenticationUserOnToken(userData)
+    suspend fun authenticationUserOnToken() {
+            userRepository.authenticationUserOnToken(UserDataToken(userRepository.getToken().orEmpty()))
     }
+
+    fun getToken() = userRepository.getToken()
 }

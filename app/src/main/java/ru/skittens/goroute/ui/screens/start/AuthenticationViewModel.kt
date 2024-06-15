@@ -9,13 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.skittens.domain.entity.AuthenticationUserData
 import ru.skittens.domain.entity.RegistrationUserData
-import ru.skittens.domain.entity.UserDataToken
-import ru.skittens.domain.usecase.TokenUseCase
 import ru.skittens.domain.usecase.UserDataUseCase
 
 class AuthenticationViewModel(
     private val userDataUseCase: UserDataUseCase,
-    private val tokenUseCase: TokenUseCase
 ) : ViewModel() {
     val user = userDataUseCase.userFlow
 
@@ -45,9 +42,9 @@ class AuthenticationViewModel(
 
     fun authenticationUserOnToken() {
         viewModelScope.launch(Dispatchers.IO) {
-            userDataUseCase.authenticationUserOnToken(UserDataToken(getToken().orEmpty()))
+            userDataUseCase.authenticationUserOnToken()
         }
     }
 
-    fun getToken() = tokenUseCase.getToken()
+    fun getToken() = userDataUseCase.getToken()
 }

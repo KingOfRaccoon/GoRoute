@@ -202,9 +202,14 @@ fun OnBoardingTopBar(isShowButton: Boolean, skipAction: () -> Unit) {
 }
 
 @Composable
-fun CustomTextButton(title: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun CustomTextButton(
+    title: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: () -> Unit
+) {
     TextButton(onClick, modifier) {
-        BodyText(title, color = MaterialTheme.colorScheme.onSurface)
+        BodyText(title, color = color)
     }
 }
 

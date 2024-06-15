@@ -86,7 +86,7 @@ fun SplashScreen(
         viewModel.authenticationUserOnToken()
     }
 
-    LaunchedEffect(fractionWidth == 1f) {
+    LaunchedEffect(fractionWidth == 1f, user) {
         if (fractionWidth == 1f) {
             if (viewModel.getToken().isNullOrEmpty())
                 navigateTo(Destinations.OnBoarding)

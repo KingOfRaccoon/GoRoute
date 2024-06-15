@@ -46,6 +46,7 @@ class Postman {
         route: String,
         headers: Map<String, Any> = mapOf(),
         arguments: Map<String, Any?> = mapOf(),
+        token: String? = null,
         contentType: ContentType = Json
     ): Resource<T> {
         semaphore.withPermit {
@@ -60,6 +61,9 @@ class Postman {
                         if (it.value != null)
                             parameter(it.key, it.value)
                     }
+
+                    if (token != null)
+                        bearerAuth(token)
 
                     headers.forEach {
                         header(it.key, it.value)
@@ -179,17 +183,17 @@ class Postman {
             Resource.Success(http.body(), http.status.value)
         else {
             when (http.status) {
-                HttpStatusCode.Unauthorized -> Resource.Error<T>(
+                HttpStatusCode.Unauthorized -> Resource.Error(
                     Resource.ErrorsRequest.ERROR_USER_CREDENTIALS.desc + ": " + http.bodyAsText(),
                     http.status.value
                 )
 
-                HttpStatusCode.BadRequest -> Resource.Error<T>(
+                HttpStatusCode.BadRequest -> Resource.Error(
                     Resource.ErrorsRequest.ERROR_NOT_VALID_TOKEN.desc + ": " + http.bodyAsText(),
                     http.status.value
                 )
 
-                HttpStatusCode.NotFound -> Resource.Error<T>(
+                HttpStatusCode.NotFound -> Resource.Error(
                     Resource.ErrorsRequest.ERROR_NOT_FOUND.desc + ": " + http.bodyAsText(),
                     http.status.value
                 )

@@ -146,7 +146,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.AddIncident) {
-                AddIncidentScreen()
+                AddIncidentScreen(navHostController::popBackStack)
             }
 
             composable(Destinations.Profile) {

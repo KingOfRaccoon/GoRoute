@@ -24,6 +24,8 @@ import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
 import ru.skittens.goroute.ui.screens.employee.allincidents.AllIncidentsScreen
 import ru.skittens.goroute.ui.screens.tourist.DefaultTopBar
+import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
+import ru.skittens.goroute.ui.screens.tourist.profile.ProfileScreen
 
 @Composable
 fun MainEmployeeScreen() {
@@ -38,7 +40,7 @@ fun MainEmployeeScreen() {
         topBar = { DefaultTopBar() },
         bottomBar = {
             AnimatedVisibility(
-                currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.name },
+                currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.destinations.name },
                 exit = slideOutVertically { it } + shrinkVertically { 0 },
                 enter = slideInVertically { it } + expandVertically { 0 }
             ) {
@@ -80,16 +82,16 @@ fun MainEmployeeScreen() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            composable(Destinations.MapEmployee){
-
+            composable(Destinations.Map){
+                MapScreen(navHostController::navigate)
             }
 
             composable(Destinations.AllIncidents){
                 AllIncidentsScreen()
             }
 
-            composable(Destinations.ProfileEmployee){
-
+            composable(Destinations.Profile){
+                ProfileScreen()
             }
         }
     }

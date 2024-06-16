@@ -14,20 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +37,12 @@ import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.BodyText
 import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.TitleText
+import ru.skittens.goroute.ui.screens.start.AuthenticationViewModel
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(viewModel: AuthenticationViewModel = koinInject()) {
     val scrollState = rememberScrollState()
+    val user = viewModel.user.collectAsState()
     Column(
         Modifier
 //            .background(Color.Black)0xFF01A451
@@ -57,7 +56,8 @@ fun ProfileScreen() {
         Box(
             Modifier
                 .fillMaxWidth(.35f)
-                .aspectRatio(1f)) {
+                .aspectRatio(1f)
+        ) {
             Image(
                 painterResource(R.drawable.user), null,
                 Modifier
@@ -82,7 +82,7 @@ fun ProfileScreen() {
         }
         Spacer(Modifier.height(18.dp))
         TitleText(
-            "Василий Петров",
+            "${user.value.data?.firstname} ${if (user.value.data?.lastname?.isEmpty() == true) "Звездаков" else user.value.data?.lastname}",
             Modifier.fillMaxWidth(.8f),
             TextAlign.Center,
             Color.Black,
@@ -183,7 +183,7 @@ fun ProfileScreen() {
     }
 }
 
-fun getRank(rating: Int) = when(rating){
+fun getRank(rating: Int) = when (rating) {
     in 0..299 -> "Мышь"
     in 300..599 -> "Белка"
     in 600..899 -> "Кот"

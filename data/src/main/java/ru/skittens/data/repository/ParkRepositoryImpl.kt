@@ -3,9 +3,7 @@ package ru.skittens.data.repository
 import kotlinx.coroutines.flow.*
 import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.data.source.network.parks.ParkService
-import ru.skittens.domain.entity.Area
-import ru.skittens.domain.entity.Park
-import ru.skittens.domain.entity.Route
+import ru.skittens.domain.entity.*
 import ru.skittens.domain.repository.ParkRepository
 
 class ParkRepositoryImpl(private val parkService: ParkService): ParkRepository {
@@ -17,6 +15,12 @@ class ParkRepositoryImpl(private val parkService: ParkService): ParkRepository {
     
     private val _routesFlow = MutableStateFlow<Resource<List<Route>>>(Resource.Loading())
     override val routesFlow: StateFlow<Resource<List<Route>>> = _routesFlow.asStateFlow()
+
+    private val _typesFlow = MutableStateFlow<Resource<List<Type>>>(Resource.Loading())
+    override val typesFlow = _typesFlow.asStateFlow()
+
+    private val _levelsFlow = MutableStateFlow<Resource<List<Level>>>(Resource.Loading())
+    override val levelsFlow = _levelsFlow.asStateFlow()
 
     override suspend fun getParks(token: String) {
         _parksFlow.update {
@@ -33,6 +37,18 @@ class ParkRepositoryImpl(private val parkService: ParkService): ParkRepository {
     override suspend fun getRoutes(token: String) {
         _routesFlow.update {
             parkService.getRoutes(token)
+        }
+    }
+
+    override suspend fun getLevelIncident(token: String) {
+        _levelsFlow.update {
+            parkService.getLevelIncident(token)
+        }
+    }
+
+    override suspend fun getTypeIncident(token: String) {
+        _typesFlow.update {
+            parkService.getTypeIncident(token)
         }
     }
 }

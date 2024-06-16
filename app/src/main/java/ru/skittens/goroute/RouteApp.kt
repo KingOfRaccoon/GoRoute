@@ -1,6 +1,8 @@
 package ru.skittens.goroute
 
 import android.app.Application
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.mapbox.common.MapboxOptions
 import com.mapbox.maps.mapsOptions
 import com.mapbox.maps.plugin.Plugin.Mapbox
@@ -23,7 +25,7 @@ import ru.skittens.goroute.ui.screens.start.onboarding.OnboardingViewModel
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.selectroute.SelectRouteViewModel
 
-class RouteApp: Application() {
+class RouteApp : Application() {
     private val modules = module {
         single { getScreenSize(this@RouteApp) }
         single { Postman() }
@@ -34,9 +36,13 @@ class RouteApp: Application() {
         single { TokenManager(this@RouteApp) }
         single<UserRepository> { UserRepositoryImpl(get(), get()) }
         single<ParkRepository> { ParkRepositoryImpl(get()) }
+        single<FusedLocationProviderClient> { LocationServices.getFusedLocationProviderClient(this@RouteApp) }
+        single<LocationTracker> {DefaultLocationTracker(get(), this@RouteApp)}
 
         single { GetParksUseCase(get(), get()) }
         single { GetAreasUseCase(get(), get()) }
+        single { GetLevelsUseCase(get(), get()) }
+        single { GetTypesUseCase(get(), get()) }
         single { GetAreasAndParksUseCase(get(), get()) }
         single { GetRoutesForSelectedAreaOrPark(get(), get()) }
         single { GetRoutesForChooseUseCase(get(), get()) }
@@ -45,7 +51,7 @@ class RouteApp: Application() {
         single { SelectRouteViewModel(get()) }
         single { OnboardingViewModel() }
         single { AuthenticationViewModel(get()) }
-        single { MapViewModel(get(), get(), get(), get()) }
+        single { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
     }
 
     override fun onCreate() {

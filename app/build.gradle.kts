@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,5 +79,5 @@ dependencies {
     implementation("com.mapbox.maps:android:11.4.1")
 // If you're using compose also add the compose extension
     implementation("com.mapbox.extension:maps-compose:11.4.1")
-
+    implementation ("com.google.accompanist:accompanist-permissions:0.34.0")
 }

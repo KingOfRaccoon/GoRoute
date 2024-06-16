@@ -7,6 +7,7 @@ import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.domain.entity.RouteLength
 import ru.skittens.domain.repository.ParkRepository
 import ru.skittens.domain.repository.UserRepository
+import java.math.RoundingMode
 import kotlin.math.*
 
 class GetRoutesForChooseUseCase(
@@ -19,12 +20,11 @@ class GetRoutesForChooseUseCase(
 
     val routesForChooseFlow = combine(routes, selectedId, routeLengthMapFlow) { routes, id, length ->
         if (id.isNullOrEmpty())
-            routes
-        else
             when (routes) {
                 is Resource.Error -> Resource.Error(routes.message)
                 is Resource.Loading -> Resource.Loading()
-                is Resource.Success -> Resource.Success(routes.data.filter { it.areaId == id }
+                is Resource.Success -> Resource.Success(routes.data
+                    .filter {it.getPathData().isNotEmpty()}
                     .map { it.copy(length = length.map[it.id] ?: 0.0) }.also {
                         it.forEach { route ->
                             val points = route.getPathData().map { it.points }.flatten()
@@ -37,14 +37,38 @@ class GetRoutesForChooseUseCase(
                                             points.last()[1],
                                             points.last()[0]
                                         ))).toMutableMap()
-                                    )
+                                    ).also { println("routeLengthMapFlow: $it") }
+                                }
+                        }
+                    })
+            }
+        else
+            when (routes) {
+                is Resource.Error -> Resource.Error(routes.message)
+                is Resource.Loading -> Resource.Loading()
+                is Resource.Success -> Resource.Success(routes.data.filter {
+                    it.areaId == id && it.getPathData().isNotEmpty()
+                }
+                    .map { it.copy(length = length.map[it.id] ?: 0.0) }.also {
+                        it.forEach { route ->
+                            val points = route.getPathData().map { it.points }.flatten()
+                            if (points.isNotEmpty())
+                                routeLengthMapFlow.update {
+                                    it.copy(
+                                        (it.map + (route.id to haversine(
+                                            points.first()[1],
+                                            points.first()[0],
+                                            points.last()[1],
+                                            points.last()[0]
+                                        ))).toMutableMap()
+                                    ).also { println("routeLengthMapFlow: $it") }
                                 }
                         }
                     })
             }
     }
 
-    fun setId(newId: String) {
+    fun setId(newId: String?) {
         selectedId.update {
             newId
         }
@@ -70,6 +94,6 @@ class GetRoutesForChooseUseCase(
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         // Расстояние
-        return R * c
+        return (R * c).toBigDecimal().setScale(1, RoundingMode.DOWN).toDouble()
     }
 }

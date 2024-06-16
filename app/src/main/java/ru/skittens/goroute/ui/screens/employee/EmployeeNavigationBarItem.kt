@@ -9,7 +9,7 @@ enum class EmployeeNavigationBarItem(
     val title: String,
     @DrawableRes val icon: Int
 ) {
-    Map(Destinations.MapEmployee, "Карта", R.drawable.ic_map),
+    Map(Destinations.Map, "Карта", R.drawable.ic_map),
     AllIncidents(Destinations.AllIncidents, "Инциденты", R.drawable.ic_warning),
-    Profile(Destinations.ProfileEmployee, "Профиль", R.drawable.ic_profile)
+    Profile(Destinations.Profile, "Профиль", R.drawable.ic_profile)
 }

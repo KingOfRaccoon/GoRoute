@@ -1,5 +1,6 @@
 package ru.skittens.goroute.ui.screens.tourist.addincident
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,12 +45,13 @@ import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
+fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinInject()) {
     val levels by viewModel.levelsFlow.collectAsState()
     val types by viewModel.typesFlow.collectAsState()
     val selectedLevel = viewModel.selectedLevelState
     val selectedType = viewModel.selectedTypeState
     val descriptionState = viewModel.descriptionState
+    val context = LocalContext.current
 
     val locationPermissions = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -171,13 +174,15 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
                 }
             }
         }
+
         Spacer(Modifier.weight(1f))
         FilledColorButton(
             "Добавить", modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            
+            Toast.makeText(context, "Сообщение о происшествии отправлено", Toast.LENGTH_SHORT).show()
+            navigateBack()
         }
     }
 }

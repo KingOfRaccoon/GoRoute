@@ -38,7 +38,7 @@ fun MainEmployeeScreen() {
         topBar = { DefaultTopBar() },
         bottomBar = {
             AnimatedVisibility(
-                currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.name },
+                currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.destinations.name },
                 exit = slideOutVertically { it } + shrinkVertically { 0 },
                 enter = slideInVertically { it } + expandVertically { 0 }
             ) {

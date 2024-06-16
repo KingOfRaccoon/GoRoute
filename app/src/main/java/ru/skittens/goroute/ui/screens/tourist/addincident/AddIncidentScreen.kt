@@ -1,5 +1,6 @@
 package ru.skittens.goroute.ui.screens.tourist.addincident
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,18 +11,23 @@ import androidx.compose.material3.*
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import org.koin.compose.koinInject
+import ru.skittens.goroute.R
+import ru.skittens.goroute.ui.elements.BodyText
+import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
@@ -83,7 +89,7 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 18.dp),
-            label = { CaptionText("Геолокация", color = MaterialTheme.colorScheme.primary) },
+            label = { BodyText("Геолокация", color = MaterialTheme.colorScheme.primary) },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
                 errorIndicatorColor = Color.Transparent,
@@ -106,7 +112,7 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 18.dp),
-            label = { CaptionText("Геолокация", color = MaterialTheme.colorScheme.primary) },
+            label = { BodyText("Описание проблемы", color = MaterialTheme.colorScheme.primary) },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
                 errorIndicatorColor = Color.Transparent,
@@ -119,16 +125,21 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
 }
 
 @Composable
-private fun SelectVariantTextField(
+fun SelectVariantTextField(
     label: String,
     selectedText: String,
     updateText: (String) -> Unit,
     suggestions: List<String>
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val icon = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+    val icon = if (expanded) painterResource(R.drawable.chevron_down) else painterResource(R.drawable.chevron_up)
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
-    Box(Modifier.padding(horizontal = 18.dp)) {
+    Box(Modifier
+        .padding(horizontal = 18.dp)
+        .background(
+            color = Color(0xFFFFFFFF),
+            shape = RoundedCornerShape(size = 24.dp)
+    )) {
         TextField(
             value = selectedText,
             onValueChange = { },
@@ -137,10 +148,12 @@ private fun SelectVariantTextField(
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
                 .onGloballyPositioned { coordinates ->
-                    //This value is used to assign to the DropDown the same width
                     textfieldSize = coordinates.size.toSize()
-                },
-            label = { CaptionText(label, color = MaterialTheme.colorScheme.primary) },
+                }
+                .background(
+                    color = Color(0xFFFFFFFF),
+                    shape = RoundedCornerShape(size = 24.dp)),
+            label = { BodyText(label, color = MaterialTheme.colorScheme.primary) },
             trailingIcon = {
                 Icon(
                     icon,
@@ -154,21 +167,28 @@ private fun SelectVariantTextField(
                 unfocusedIndicatorColor = Color.Transparent
             ),
             shape = RoundedCornerShape(24.dp)
+
         )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
-        ) {
-            suggestions.forEach { label ->
-                DropdownMenuItem(onClick = {
-                    updateText(label)
-                    expanded = false
-                }, text = {
-                    Text(text = label)
-                })
-            }
-        }
+        MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(24.dp))) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
+                    .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                    .clip(RoundedCornerShape(24.dp))
+            ) {
+                suggestions.forEach { label ->
+                    DropdownMenuItem(onClick = {
+                        updateText(label)
+                        expanded = false
+                    }, text = {
+                        ButtonText(text = label)
+                    }, modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                        .clip(RoundedCornerShape(24.dp)))
+
+                }
+        }}
     }
 }

@@ -16,11 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,9 +46,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import org.koin.compose.koinInject
 import ru.skittens.goroute.R
+import ru.skittens.goroute.ui.elements.BodyText
+import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
+import ru.skittens.goroute.ui.screens.tourist.addincident.SelectVariantTextField
+import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @Composable
 fun PermissionScreen() {
@@ -105,21 +115,25 @@ fun PermissionScreen() {
             }
         }
         Spacer(Modifier.height(12.dp))
-        DropdownTextField()
+        DropdownTextField("Тип разрешения")
         Spacer(Modifier.height(12.dp))
-        OutLineTextFieldSample()
+        OutLineTextFieldSample("Заголовоооок")
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutLineTextFieldSample() {
+fun OutLineTextFieldSample(title: String) {
     var text by remember { mutableStateOf(TextFieldValue("")) }
     TextField(
         value = text,
-        label = { Text(text = "Enter Your Name") },
-        onValueChange = {
-            text = it
-        },
+        onValueChange = { text = it },
+        label = { BodyText(text = title, textAlign = TextAlign.Center,) },
         shape = RoundedCornerShape(size = 24.dp),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .shadow(
@@ -131,29 +145,35 @@ fun OutLineTextFieldSample() {
             .clip(RoundedCornerShape(size = 24.dp))
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownTextField(){
+fun DropdownTextField(title: String){
     var expanded by remember { mutableStateOf(false) }
     val suggestions = listOf("Item1","Item2","Item3")
     var selectedText by remember { mutableStateOf("") }
     var textfieldSize by remember { mutableStateOf(Size.Zero)}
     val icon = if (expanded)
-        painterResource(R.drawable.chevron_up)
-    else
         painterResource(R.drawable.chevron_down)
+    else
+        painterResource(R.drawable.chevron_up)
     Box() {
         TextField(
             value = selectedText,
             onValueChange = { selectedText = it },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
                     textfieldSize = coordinates.size.toSize()
                 }
-                .background(color = Color(0xFFFFF0C3), shape = RoundedCornerShape(size = 24.dp))
+                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 24.dp))
                 .clip(RoundedCornerShape(size = 24.dp)),
 
-            label = {Text("Label")},
+            label = { BodyText(title, textAlign = TextAlign.Center,) },
             trailingIcon = {
                 Icon(icon,"contentDescription",
                     Modifier.clickable { expanded = !expanded })
@@ -165,13 +185,17 @@ fun DropdownTextField(){
             modifier = Modifier
                 .width(with(LocalDensity.current){textfieldSize.width.toDp()})
         ) {
-//            suggestions.forEach { label ->
-//                DropdownMenuItem(onClick = {
-//                    selectedText = label
-//                }) {
-//                    Text(text = label)
-//                }
-//            }
+            suggestions.forEach { label ->
+                DropdownMenuItem(onClick = {
+                    selectedText = label
+                    expanded = false
+                }, text = {
+                    ButtonText(text = label)
+                }, modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                    .clip(RoundedCornerShape(24.dp)))
+
+            }
         }
     }
 }

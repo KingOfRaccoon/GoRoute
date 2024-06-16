@@ -190,7 +190,7 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
 
             routes.data?.forEach { route ->
                 RouteMapItem(route) {
-                    Toast.makeText(context, "У меня ${it.points.size}", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "У меня ${it.points.size}", Toast.LENGTH_SHORT).show()
 
                     true
                 }
@@ -198,12 +198,12 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
 
             areas.data?.forEach { area ->
                 ParkOrAreaItem(area, bitmap) {
+                    bottomSheetState = BottomSheetState.ParkOrArea
+                    isShowArea = true
+                    coroutineScope.launch {
+                        areaBottomSheetState.show()
+                    }
                     if (currentId != area.id) {
-                        bottomSheetState = BottomSheetState.ParkOrArea
-                        isShowArea = true
-                        coroutineScope.launch {
-                            areaBottomSheetState.show()
-                        }
                         viewModel.setAreaOrParkId(area.id)
 
                         Toast.makeText(context, "Меня зовут ${area.name}", Toast.LENGTH_SHORT)

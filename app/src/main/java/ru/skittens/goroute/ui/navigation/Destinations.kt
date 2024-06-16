@@ -1,6 +1,6 @@
 package ru.skittens.goroute.ui.navigation
 
-enum class Destinations(val title: String = "") {
+enum class Destinations(val title: String? = "") {
     Splash,
     OnBoarding,
     Authentication,
@@ -9,10 +9,10 @@ enum class Destinations(val title: String = "") {
     MainAdmin,
     MainTourist,
     Routes,
-    NewRoute,
+    NewRoute("Новый поход"),
     EndedRoutes,
-    SelectRoute,
-    SelectParkOrSight,
+    SelectRoute(null),
+    SelectParkOrSight("Новый поход"),
     AddGroup,
     Group,
     Permission,

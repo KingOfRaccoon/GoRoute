@@ -33,6 +33,7 @@ class MapViewModel(
     val selectedTypeState = mutableStateOf("")
     val descriptionState = mutableStateOf("")
     var currentLocation by mutableStateOf<Location?>(null)
+    var topBarValue by mutableStateOf("")
 
     fun loadLevels(){
         viewModelScope.launch(Dispatchers.IO) {

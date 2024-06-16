@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -63,6 +64,7 @@ import ru.skittens.goroute.ui.elements.PageIndicator
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
+import ru.skittens.goroute.ui.screens.tourist.DefaultTopBar
 import java.util.*
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class)
@@ -164,6 +166,7 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
                 }
             }
         }
+        DefaultTopBar()
 
         FloatingActionButton(
             { navigateTo(Destinations.AddIncident) },

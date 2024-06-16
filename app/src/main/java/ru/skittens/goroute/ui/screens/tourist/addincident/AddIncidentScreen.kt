@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.*
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -30,6 +31,7 @@ import ru.skittens.goroute.ui.elements.BodyText
 import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
+import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -83,7 +85,7 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
         )
 
         TextField(
-            value = "Широта: ${viewModel.currentLocation?.latitude}, долгота: ${viewModel.currentLocation?.longitude}",
+            value = viewModel.currentLocation?.let { "Широта: ${it.latitude}, долгота: ${it.longitude}"} ?: "Проверьте подключение к GPS",
             onValueChange = { },
             readOnly = true,
             modifier = Modifier
@@ -109,10 +111,8 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
         TextField(
             value = descriptionState.value,
             onValueChange = descriptionState::value::set,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
-            label = { BodyText("Описание проблемы", color = MaterialTheme.colorScheme.primary) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+            label = { CaptionText("Описание происшествия", color = MaterialTheme.colorScheme.primary) },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
                 errorIndicatorColor = Color.Transparent,
@@ -121,6 +121,13 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
             ),
             shape = RoundedCornerShape(24.dp)
         )
+
+        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
+            ButtonText("Фотографии")
+            CustomTextButton("Добавить"){
+                
+            }
+        }
     }
 }
 
@@ -187,7 +194,6 @@ fun SelectVariantTextField(
                     }, modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
                         .clip(RoundedCornerShape(24.dp)))
-
                 }
         }}
     }

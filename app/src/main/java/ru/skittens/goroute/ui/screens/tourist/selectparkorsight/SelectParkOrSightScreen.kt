@@ -23,6 +23,7 @@ fun SelectParkOrSightScreen(navigateTo: NavigationFun, viewModel: MapViewModel =
         items(areas.data.orEmpty()) {
             ParkOrSightItem(it.name + " " + it.subname) {
                 viewModel.setAreaId(it.id)
+                viewModel.topBarValue = it.name
                 navigateTo(Destinations.SelectRoute)
             }
         }

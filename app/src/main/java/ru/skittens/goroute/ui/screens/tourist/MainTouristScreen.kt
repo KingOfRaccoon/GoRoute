@@ -1,10 +1,6 @@
 package ru.skittens.goroute.ui.screens.tourist
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,28 +8,26 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.koin.compose.koinInject
 import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.BodyText
+import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
@@ -42,6 +36,7 @@ import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentScreen
 import ru.skittens.goroute.ui.screens.tourist.endedroutes.EndedRoutesScreen
 import ru.skittens.goroute.ui.screens.tourist.group.GroupScreen
 import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
+import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.newroute.NewRouteScreen
 import ru.skittens.goroute.ui.screens.tourist.permission.PermissionScreen
 import ru.skittens.goroute.ui.screens.tourist.routes.RoutesScreen
@@ -49,13 +44,18 @@ import ru.skittens.goroute.ui.screens.tourist.selectparkorsight.SelectParkOrSigh
 import ru.skittens.goroute.ui.screens.tourist.selectroute.SelectRouteScreen
 
 @Composable
-fun MainTouristScreen() {
+fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
     val navHostController = rememberNavController()
     val currentEntity by navHostController.currentBackStackEntryAsState()
+    val currentDestinations = remember(currentEntity) {
+        Destinations.entries.find { it.name == currentEntity?.destination?.route } ?: Destinations.Map
+    }
 
     Scaffold(
-        Modifier.fillMaxSize().systemBarsPadding(),
-        topBar = { MainTopBar() },
+        Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
+        topBar = { MainTopBar(currentDestinations, viewModel.topBarValue) { navHostController.popBackStack() } },
         bottomBar = {
             AnimatedVisibility(
                 currentEntity?.destination?.route in arrayOf(
@@ -67,7 +67,9 @@ fun MainTouristScreen() {
                 enter = slideInVertically { it } + expandVertically { 0 }
             ) {
                 NavigationBar(
-                    Modifier.fillMaxWidth().padding(horizontal = 18.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp)
                         .shadow(
                             elevation = 24.dp,
                             spotColor = Color(0x0D000000),
@@ -110,11 +112,11 @@ fun MainTouristScreen() {
                 NewRouteScreen(navHostController::navigate)
             }
 
-            composable(Destinations.SelectParkOrSight){
+            composable(Destinations.SelectParkOrSight) {
                 SelectParkOrSightScreen(navHostController::navigate)
             }
 
-            composable(Destinations.SelectRoute){
+            composable(Destinations.SelectRoute) {
                 SelectRouteScreen(navHostController::navigate)
             }
 
@@ -137,7 +139,7 @@ fun MainTouristScreen() {
                 MapScreen(navHostController::navigate)
             }
 
-            composable(Destinations.Permission){
+            composable(Destinations.Permission) {
                 // TODO это экран получения разрешения
                 PermissionScreen()
             }
@@ -153,15 +155,49 @@ fun MainTouristScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTopBar() {
+fun MainTopBar(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
+//    AnimatedContent(destinations) {
+        when (destinations) {
+            Destinations.Group, Destinations.Permission, Destinations.AddIncident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.AddGroup -> {
+                BackTopBar(destinations, topBarValue, onBackStack)
+            }
+
+            Destinations.Profile, Destinations.Routes -> {
+                DefaultTopBar()
+            }
+
+            Destinations.Map -> {}
+            Destinations.NewsFriends -> {}
+            else -> {}
+        }
+//    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun DefaultTopBar() {
     TopAppBar(
         {},
         Modifier
             .fillMaxWidth()
             .navigationBarsPadding(),
         { Image(painterResource(R.drawable.logo_small), null) },
+        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent)
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun BackTopBar(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
+    TopAppBar(
+        {
+            TitleText(destinations.title ?: topBarValue)
+        },
+        Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+        { IconButton(onBackStack) { Image(Icons.AutoMirrored.Filled.ArrowBack, null) } },
         colors = TopAppBarDefaults.topAppBarColors(Color.Transparent)
     )
 }

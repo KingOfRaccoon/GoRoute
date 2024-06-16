@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,24 +93,26 @@ fun OnboardingScreen(
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
-            Modifier.fillMaxSize().drawBehind {
-                val translationFactor = 0.3f // 15% shift per each page
-                val translationX = offset * size.width * translationFactor
-                drawIntoCanvas { canvas ->
-                    canvas.drawImageRect(
-                        image = imageBitmap,
-                        srcOffset = IntOffset(translationX.toInt(), 0),
-                        dstSize = IntSize(
-                            width.value.toInt() * (imageDrawable?.intrinsicWidth
-                                ?: 1) / (imageDrawable?.intrinsicHeight ?: 1) * 2,
-                            height.value.toInt()
-                        ),
-                        paint = Paint().apply {
-                            isAntiAlias = true
-                        }
-                    )
-                }
-            },
+            Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    val translationFactor = 0.3f // 15% shift per each page
+                    val translationX = offset * size.width * translationFactor
+                    drawIntoCanvas { canvas ->
+                        canvas.drawImageRect(
+                            image = imageBitmap,
+                            srcOffset = IntOffset(translationX.toInt(), 0),
+                            dstSize = IntSize(
+                                width.value.toInt() * (imageDrawable?.intrinsicWidth
+                                    ?: 1) / (imageDrawable?.intrinsicHeight ?: 1) * 2,
+                                height.value.toInt()
+                            ),
+                            paint = Paint().apply {
+                                isAntiAlias = true
+                            }
+                        )
+                    }
+                },
             topBar = {
                 OnBoardingTopBar(!buttonShow) {
                     coroutineScope.launch {
@@ -118,7 +121,10 @@ fun OnboardingScreen(
                 }
             }, containerColor = Color.White.copy(.5f)
         ) {
-            Box(Modifier.fillMaxSize().padding(it)) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)) {
                 Column(Modifier.fillMaxSize()) {
                     HorizontalPager(pagerState, Modifier.weight(1f)) {
                         OnboardingItem(viewModel.onboardings[it])
@@ -136,7 +142,8 @@ fun OnboardingScreen(
                     Spacer(Modifier.height(12.dp))
                     PageIndicator(
                         pagerState.pageCount,
-                        Modifier.padding(bottom = 18.dp)
+                        Modifier
+                            .padding(bottom = 18.dp)
                             .align(Alignment.CenterHorizontally),
                         pagerState.currentPage,
                         MaterialTheme.colorScheme.onSurface,
@@ -178,7 +185,10 @@ private fun OnboardingItem(onboarding: Onboarding) {
         Image(
             rememberAsyncImagePainter(onboarding.image),
             null,
-            Modifier.fillMaxWidth(0.6f).aspectRatio(1f)
+            Modifier
+                .fillMaxWidth(0.6f)
+                .aspectRatio(1f)
+                .padding(bottom = 16.dp)
         )
 
         HalfTransparentCard(onboarding.title, onboarding.subTile)
@@ -190,7 +200,9 @@ private fun OnboardingItem(onboarding: Onboarding) {
 fun OnBoardingTopBar(isShowButton: Boolean, skipAction: () -> Unit) {
     TopAppBar(
         {},
-        Modifier.fillMaxWidth().navigationBarsPadding(),
+        Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
         { Image(painterResource(R.drawable.logo_small), null) },
         {
             AnimatedVisibility(isShowButton) {

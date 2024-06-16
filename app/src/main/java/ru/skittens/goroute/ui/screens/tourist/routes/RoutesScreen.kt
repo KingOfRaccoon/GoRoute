@@ -58,7 +58,7 @@ fun RoutesScreen(navigateTo: NavigationFun) {
                 Modifier.padding(horizontal = 18.dp),
                 shape = RoundedCornerShape(24.dp)
             ) {
-                Box(Modifier.fillMaxWidth().aspectRatio(2.5f).background(Color.Green)) {
+                Box(Modifier.fillMaxWidth().aspectRatio(2.5f).background(Color.LightGray)) {
                     BlurredChip(Modifier.align(Alignment.Center)) {
                         TextButton({ navigateTo(Destinations.NewRoute) }) {
                             Icon(

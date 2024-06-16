@@ -112,19 +112,19 @@ fun AuthenticationScreen(
             Image(
                 painterResource(R.drawable.logo_big),
                 null,
-                Modifier.fillMaxWidth(0.3f).aspectRatio(1f)
+                Modifier.fillMaxWidth(1f)
             )
-            Spacer(Modifier.height(90.dp))
+            Spacer(Modifier.weight(.5f))
 
             LoginTextField(viewModel.login, viewModel::login::set)
             PasswordTextField(viewModel.password, viewModel::password::set)
 //            CustomTextButton("Забыли пароль?", Modifier.align(Alignment.End)) { }
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.weight(0.1f))
             FilledColorButton("Войти", onClick = viewModel::authenticationUser)
             FilledColorButton("Создать аккаунт", MaterialTheme.colorScheme.onSurface.copy(.9f)) {
                 navigateTo(Destinations.Registration)
             }
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.weight(.1f))
         }
     }
 }

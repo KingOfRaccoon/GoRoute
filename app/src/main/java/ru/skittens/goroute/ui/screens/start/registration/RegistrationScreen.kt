@@ -100,11 +100,9 @@ fun RegistrationScreen(
             Image(
                 painterResource(R.drawable.logo_big),
                 null,
-                Modifier
-                    .fillMaxWidth(0.3f)
-                    .aspectRatio(1f)
+                Modifier.fillMaxWidth(1f)
             )
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.weight(.5f))
 
             NameTextField(viewModel.fullName, viewModel::fullName::set)
             LoginTextField(viewModel.login, viewModel::login::set)

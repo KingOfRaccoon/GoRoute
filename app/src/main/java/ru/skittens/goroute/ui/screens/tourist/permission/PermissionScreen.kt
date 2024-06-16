@@ -149,7 +149,7 @@ fun OutLineTextFieldSample(title: String) {
 @Composable
 fun DropdownTextField(title: String){
     var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Item1","Item2","Item3")
+    val suggestions = listOf("Индивидуальный поход","Групповой поход","Юридическое лицо")
     var selectedText by remember { mutableStateOf("") }
     var textfieldSize by remember { mutableStateOf(Size.Zero)}
     val icon = if (expanded)

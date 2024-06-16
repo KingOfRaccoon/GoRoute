@@ -2,6 +2,7 @@ package ru.skittens.goroute.ui.screens.tourist.selectroute
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.mapbox.geojson.Point
+import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.Style
+import com.mapbox.maps.extension.compose.MapEffect
+import com.mapbox.maps.extension.compose.MapboxMap
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.localization.localizeLabels
 import org.koin.compose.koinInject
 import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.domain.entity.Route
@@ -42,16 +51,21 @@ import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
-import kotlin.math.*
+import ru.skittens.goroute.ui.screens.tourist.map.RouteMapItem
+import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SelectRouteScreen(navigateTo: NavigationFun, selectRouteViewModel: SelectRouteViewModel = koinInject()) {
     val routes by selectRouteViewModel.routes.collectAsState(Resource.Loading())
 
+    LaunchedEffect(Unit){
+        selectRouteViewModel.loadRoutes()
+    }
+
     LazyColumn(Modifier.fillMaxSize()) {
         stickyHeader {
-            Row(Modifier.fillMaxWidth(), Arrangement.Center) {
+            Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background), Arrangement.Center) {
                 BodyText("${routes.data?.size ?: 0} маршрутов", textAlign = TextAlign.Center)
             }
         }
@@ -60,8 +74,14 @@ fun SelectRouteScreen(navigateTo: NavigationFun, selectRouteViewModel: SelectRou
     }
 }
 
+@OptIn(MapboxExperimental::class)
 @Composable
 fun RouteItem(route: Route, onClick: () -> Unit) {
+    val state = rememberMapViewportState(){
+        setCameraOptions {
+            center(calculatePolygonCenter(route.getPathData().map { it.points }.flatten())).zoom(8.0).build()
+        }
+    }
     Card(
         onClick,
         Modifier
@@ -74,13 +94,19 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
                 .fillMaxWidth()
                 .weight(2f)
         ) {
-            Image(
-                rememberAsyncImagePainter(R.drawable.backgroung_onboarding),
-                null,
+            MapboxMap(
                 Modifier.fillMaxSize(),
-                Alignment.Center,
-                ContentScale.Crop
-            )
+                mapViewportState = state
+            ){
+                MapEffect(Unit) { mapView ->
+                    mapView.mapboxMap.loadStyle(Style.Companion.OUTDOORS) {
+                        it.localizeLabels(Locale.getDefault())
+                    }
+                }
+                RouteMapItem(route){
+                    false
+                }
+            }
 
             Card(
                 Modifier
@@ -96,12 +122,11 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(1f)
                 .padding(18.dp, 10.dp),
             Arrangement.spacedBy(8.dp)
         ) {
             TitleText(route.name)
-            Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(4.dp)) {
+            Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(4.dp), Alignment.CenterVertically) {
                 Icon(
                     painterResource(R.drawable.ic_routes),
                     null,
@@ -114,4 +139,21 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
             }
         }
     }
+}
+
+fun calculatePolygonCenter(polygon: List<List<Double>>): Point {
+    val coordinates = polygon // Используем кольцо внешних координат
+    var totalLat = 0.0
+    var totalLng = 0.0
+    val count = coordinates.size
+
+    for (coordinate in coordinates) {
+        totalLat += coordinate[0]
+        totalLng += coordinate[1]
+    }
+
+    val avgLat = totalLat / count
+    val avgLng = totalLng / count
+
+    return Point.fromLngLat(avgLng, avgLat)
 }

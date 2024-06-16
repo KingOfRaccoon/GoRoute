@@ -16,6 +16,7 @@ enum class Destinations(val title: String = "") {
     AddGroup,
     Group,
     Permission,
+    AddIncident,
     Map("Карта"),
     NewsFriends("Лента новостей"),
     Profile("Профиль"),

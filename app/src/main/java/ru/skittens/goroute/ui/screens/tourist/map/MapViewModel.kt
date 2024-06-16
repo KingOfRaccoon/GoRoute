@@ -28,7 +28,7 @@ class MapViewModel(
         }
     }
     
-    fun setAreaId(newId: String) = getRoutesForChooseUseCase.setId(newId)
+    fun setAreaId(newId: String?) = getRoutesForChooseUseCase.setId(newId)
     
     fun setAreaOrParkId(selectedId: String) = getRoutesForSelectedAreaOrPark(selectedId)
     

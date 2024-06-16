@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -116,50 +117,62 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
     }
 
 
-    MapboxMap(Modifier.fillMaxSize(), mapViewportState = state) {
-        MapEffect(Unit) { mapView ->
-            mapView.mapboxMap.loadStyle(Style.Companion.OUTDOORS) {
-                it.localizeLabels(Locale.getDefault())
-            }
-        }
-
-        //        parks.data?.forEach { park ->
-        //            ParkOrAreaItem(park) {
-        //                println("set newId: " + park.id)
-        //                viewModel.setAreaOrParkId(park.id)
-        //
-        //                Toast.makeText(context, "Меня зовут ${park.name}", Toast.LENGTH_SHORT).show()
-        //                state.flyTo(CameraOptions.Builder().center(calculatePolygonCenter(it)).build())
-        //                true
-        //            }
-        //        }
-
-        routes.data?.forEach { route ->
-            RouteItem(route) {
-                Toast.makeText(context, "У меня ${it.points.size}", Toast.LENGTH_SHORT).show()
-
-                true
-            }
-        }
-
-        areas.data?.forEach { area ->
-            ParkOrAreaItem(area) {
-                if (currentId != area.id) {
-                    bottomSheetState = BottomSheetState.ParkOrArea
-                    isShowArea = true
-                    coroutineScope.launch {
-                        areaBottomSheetState.show()
-                    }
-                    viewModel.setAreaOrParkId(area.id)
-
-                    Toast.makeText(context, "Меня зовут ${area.name}", Toast.LENGTH_SHORT).show()
-                    state.flyTo(CameraOptions.Builder().center(calculatePolygonCenter(it.points)).build())
-
-                    true
-                } else {
-                    false
+    Box(Modifier.fillMaxSize()) {
+        MapboxMap(Modifier.fillMaxSize(), mapViewportState = state) {
+            MapEffect(Unit) { mapView ->
+                mapView.mapboxMap.loadStyle(Style.Companion.OUTDOORS) {
+                    it.localizeLabels(Locale.getDefault())
                 }
             }
+
+            //        parks.data?.forEach { park ->
+            //            ParkOrAreaItem(park) {
+            //                println("set newId: " + park.id)
+            //                viewModel.setAreaOrParkId(park.id)
+            //
+            //                Toast.makeText(context, "Меня зовут ${park.name}", Toast.LENGTH_SHORT).show()
+            //                state.flyTo(CameraOptions.Builder().center(calculatePolygonCenter(it)).build())
+            //                true
+            //            }
+            //        }
+
+            routes.data?.forEach { route ->
+                RouteMapItem(route) {
+                    Toast.makeText(context, "У меня ${it.points.size}", Toast.LENGTH_SHORT).show()
+
+                    true
+                }
+            }
+
+            areas.data?.forEach { area ->
+                ParkOrAreaItem(area) {
+                    if (currentId != area.id) {
+                        bottomSheetState = BottomSheetState.ParkOrArea
+                        isShowArea = true
+                        coroutineScope.launch {
+                            areaBottomSheetState.show()
+                        }
+                        viewModel.setAreaOrParkId(area.id)
+
+                        Toast.makeText(context, "Меня зовут ${area.name}", Toast.LENGTH_SHORT).show()
+                        state.flyTo(CameraOptions.Builder().center(calculatePolygonCenter(it.points)).build())
+
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        }
+
+        FloatingActionButton(
+            { navigateTo(Destinations.AddIncident) },
+            Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ) {
+            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.primary)
         }
     }
 }
@@ -192,12 +205,13 @@ fun ParkOrAreaItem(area: Area, onClick: (PolygonAnnotation) -> Boolean) {
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun RouteItem(route: Route, onClick: (PolylineAnnotation) -> Boolean) {
+fun RouteMapItem(route: Route, onClick: (PolylineAnnotation) -> Boolean) {
     route.getPathData().forEach {
         PolylineAnnotation(
             points = it.points.map { Point.fromLngLat(it[1], it[0]) },
             lineColorInt = hexToColor(it.color),
             lineOpacity = 30.0,
+            lineWidth = 2.0,
             onClick = onClick
         )
 
@@ -232,155 +246,155 @@ fun AreaBottomSheet(
 //        AnimatedContent(state) {
 //            when (it) {
 //                BottomSheetState.ParkOrArea -> {
-                    val carouselPager = rememberPagerState { 2 }
-                    Column {
-                        Box {
-                            HorizontalPager(carouselPager) {
-                                AsyncImage(
-                                    "https://green-button.empedokl.com/upload/park5.jpg",
-                                    null,
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(2f),
-                                    contentScale = ContentScale.Crop
+        val carouselPager = rememberPagerState { 2 }
+        Column {
+            Box {
+                HorizontalPager(carouselPager) {
+                    AsyncImage(
+                        "https://green-button.empedokl.com/upload/park5.jpg",
+                        null,
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(2f),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
+                ) {
+
+                    IconButton(
+                        onDismiss,
+                        Modifier,
+                        colors = IconButtonDefaults.iconButtonColors(Color.White.copy(.4f))
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
+                    }
+
+                    TitleText(
+                        area.subname.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.forLanguageTag(
+                                    "ru"
                                 )
-                            }
+                            ) else it.toString()
+                        },
+                        Modifier,
+                        TextAlign.Center,
+                        Color.White
+                    )
 
-                            Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                Arrangement.SpaceBetween,
-                                Alignment.CenterVertically
-                            ) {
+                    IconButton(
+                        {},
+                        Modifier,
+                        false,
+                        colors = IconButtonDefaults.iconButtonColors(disabledContainerColor = Color.White)
+                    ) {
+                        Icon(Icons.Filled.BarChart, null, tint = MaterialTheme.colorScheme.primary)
+                    }
+                }
 
-                                IconButton(
-                                    onDismiss,
-                                    Modifier,
-                                    colors = IconButtonDefaults.iconButtonColors(Color.White.copy(.4f))
-                                ) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
-                                }
+                PageIndicator(
+                    carouselPager.pageCount,
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 12.dp),
+                    carouselPager.currentPage,
+                    MaterialTheme.colorScheme.primary
+                )
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(16.dp, 8.dp)
+            ) {
+                Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
+                    TitleText(area.name)
+                    TextButton({}) {
+                        BodyText(
+                            "На карте",
+                            Modifier.align(Alignment.CenterVertically),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            null,
+                            Modifier.align(Alignment.CenterVertically),
+                            MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
 
-                                TitleText(
-                                    area.subname.replaceFirstChar {
-                                        if (it.isLowerCase()) it.titlecase(
-                                            Locale.forLanguageTag(
-                                                "ru"
-                                            )
-                                        ) else it.toString()
-                                    },
-                                    Modifier,
-                                    TextAlign.Center,
-                                    Color.White
-                                )
-
-                                IconButton(
-                                    {},
-                                    Modifier,
-                                    false,
-                                    colors = IconButtonDefaults.iconButtonColors(disabledContainerColor = Color.White)
-                                ) {
-                                    Icon(Icons.Filled.BarChart, null, tint = MaterialTheme.colorScheme.primary)
-                                }
-                            }
-
-                            PageIndicator(
-                                carouselPager.pageCount,
-                                Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 12.dp),
-                                carouselPager.currentPage,
-                                MaterialTheme.colorScheme.primary
-                            )
-                        }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(5f)
+                ) {
+                    Card(
+                        { openRoutes(area.id) },
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
+                        shape = RoundedCornerShape(24.dp)
+                    ) {
                         Column(
                             Modifier
-                                .fillMaxWidth()
-                                .background(Color.White)
-                                .padding(16.dp, 8.dp)
+                                .padding(15.dp, 9.dp)
+                                .fillMaxSize(),
+                            Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                            Alignment.CenterHorizontally
                         ) {
-                            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                                TitleText(area.name)
-                                TextButton({}) {
-                                    BodyText(
-                                        "На карте",
-                                        Modifier.align(Alignment.CenterVertically),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        null,
-                                        Modifier.align(Alignment.CenterVertically),
-                                        MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-
-                            Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(5f)
-                            ) {
-                                Card(
-                                    { openRoutes(area.id) },
-                                    Modifier
-                                        .weight(1f)
-                                        .fillMaxHeight(),
-                                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
-                                    shape = RoundedCornerShape(24.dp)
-                                ) {
-                                    Column(
-                                        Modifier
-                                            .padding(15.dp, 9.dp)
-                                            .fillMaxSize(),
-                                        Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                                        Alignment.CenterHorizontally
-                                    ) {
-                                        Icon(
-                                            painterResource(R.drawable.ic_routes),
-                                            null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        TitleText(
-                                            "Маршруты",
-                                            Modifier.fillMaxWidth(),
-                                            TextAlign.Center,
-                                            MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(Modifier.height(18.dp))
-                            HorizontalDivider(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(1.dp)
+                            Icon(
+                                painterResource(R.drawable.ic_routes),
+                                null,
+                                tint = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(Modifier.height(12.dp))
-
-                            val uriHandler = LocalUriHandler.current
-                            val body = SpannableString(Html.fromHtml(area.description))
-                            body.setSpan(RelativeSizeSpan(1.3f), 0, 7, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-                            val text = body.toAnnotateString(MaterialTheme.typography.bodyLarge, null, Color.Blue)
-                            val spannedText =
-                                text.toSpannable() // превращаем в Spannable, так как Linkify работает со Spannable
-                            Linkify.addLinks(spannedText, Linkify.WEB_URLS) // Ищем и размечаем URLSpan
-
-                            ClickableText(
-                                text = text,
-                                style = MaterialTheme.typography.bodyLarge,
-                                onClick = { offset ->
-                                    text.getStringAnnotations(URL_TAG, offset, offset).firstOrNull()?.let {
-                                        uriHandler.openUri(it.item)
-                                    }
-                                }
+                            TitleText(
+                                "Маршруты",
+                                Modifier.fillMaxWidth(),
+                                TextAlign.Center,
+                                MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 }
+
+                Spacer(Modifier.height(18.dp))
+                HorizontalDivider(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                )
+                Spacer(Modifier.height(12.dp))
+
+                val uriHandler = LocalUriHandler.current
+                val body = SpannableString(Html.fromHtml(area.description))
+                body.setSpan(RelativeSizeSpan(1.3f), 0, 7, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                val text = body.toAnnotateString(MaterialTheme.typography.bodyLarge, null, Color.Blue)
+                val spannedText =
+                    text.toSpannable() // превращаем в Spannable, так как Linkify работает со Spannable
+                Linkify.addLinks(spannedText, Linkify.WEB_URLS) // Ищем и размечаем URLSpan
+
+                ClickableText(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    onClick = { offset ->
+                        text.getStringAnnotations(URL_TAG, offset, offset).firstOrNull()?.let {
+                            uriHandler.openUri(it.item)
+                        }
+                    }
+                )
+            }
+        }
+    }
 
 //                BottomSheetState.RoutesParkOrArea -> {
 //                    Column(Modifier.fillMaxWidth()) {

@@ -21,6 +21,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -33,22 +35,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
+import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @Composable
-fun NewRouteScreen(navigateTo: NavigationFun) {
+fun NewRouteScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject()) {
+    val areas by viewModel.areasFlow.collectAsState()
     Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
-        TypeCard(R.drawable.backgroung_onboarding){
+        TypeCard(R.drawable.backgroung_onboarding, areas.data?.size ?: 0){
             navigateTo(Destinations.SelectParkOrSight)
         }
     }
 }
 
 @Composable
-fun TypeCard(@DrawableRes image: Int, onClick: () -> Unit) {
+fun TypeCard(@DrawableRes image: Int, count: Int, onClick: () -> Unit) {
     Card(
         onClick,
         Modifier.fillMaxWidth().aspectRatio(2f),
@@ -65,7 +70,7 @@ fun TypeCard(@DrawableRes image: Int, onClick: () -> Unit) {
             Box(Modifier.matchParentSize().background(Color.White.copy(.5f)))
 
             BlurredCircle(Modifier.align(Alignment.TopEnd).clip(CircleShape)) {
-                TitleText("5", Modifier.padding(15.dp, 5.dp), TextAlign.Center)
+                TitleText(count.toString(), Modifier.padding(15.dp, 5.dp), TextAlign.Center)
             }
 
             Row(

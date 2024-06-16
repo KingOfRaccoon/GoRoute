@@ -38,6 +38,7 @@ import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
 import ru.skittens.goroute.ui.screens.tourist.addgroup.AddGroupScreen
+import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentScreen
 import ru.skittens.goroute.ui.screens.tourist.endedroutes.EndedRoutesScreen
 import ru.skittens.goroute.ui.screens.tourist.group.GroupScreen
 import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
@@ -139,6 +140,10 @@ fun MainTouristScreen() {
             composable(Destinations.Permission){
                 // TODO это экран получения разрешения
                 PermissionScreen()
+            }
+
+            composable(Destinations.AddIncident) {
+                AddIncidentScreen()
             }
 
             composable(Destinations.Profile) {

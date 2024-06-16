@@ -14,6 +14,4 @@ class SelectRouteViewModel(private val getRoutesForChooseUseCase: GetRoutesForCh
             getRoutesForChooseUseCase.loadRoutes()
         }
     }
-    
-    
 }

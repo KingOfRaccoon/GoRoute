@@ -39,6 +39,7 @@ import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.newroute.NewRouteScreen
 import ru.skittens.goroute.ui.screens.tourist.permission.PermissionScreen
+import ru.skittens.goroute.ui.screens.tourist.profile.ProfileScreen
 import ru.skittens.goroute.ui.screens.tourist.routes.RoutesScreen
 import ru.skittens.goroute.ui.screens.tourist.selectparkorsight.SelectParkOrSightScreen
 import ru.skittens.goroute.ui.screens.tourist.selectroute.SelectRouteScreen
@@ -149,7 +150,8 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.Profile) {
-
+                // FIxme экран профиля
+                ProfileScreen()
             }
         }
     }

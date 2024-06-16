@@ -22,23 +22,17 @@ data class Area(
 
     fun getGeometryData(): GeometryData {
         return Json.decodeFromString(
-            geometry
-                .replace("\n", "")
-                .replace("""\""", "").also { println("geometry: $it") }
+            geometry.replace("\n", "").replace("""\""", "")
         )
     }
 }
 
 @Serializable
 data class GeometryData(
-    val zoom: Int,
-    val latitude: Double,
-    val longitude: Double,
-    val areas: List<CoordinatesData>
+    val zoom: Int, val latitude: Double, val longitude: Double, val areas: List<CoordinatesData>
 )
 
 @Serializable
 data class CoordinatesData(
-    val name: String = "",
-    val coordinates: List<List<List<Double>>>
+    val name: String = "", val coordinates: List<List<List<Double>>>
 )

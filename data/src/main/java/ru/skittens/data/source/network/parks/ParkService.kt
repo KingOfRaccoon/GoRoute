@@ -25,10 +25,10 @@ class ParkService(private val postman: Postman){
     }
 
     suspend fun getLevelIncident(token: String): Resource<List<Level>> {
-        return postman.get(baseUrl, levelTag)
+        return postman.get(baseUrl, levelTag, token = token)
     }
 
     suspend fun getTypeIncident(token: String): Resource<List<Type>> {
-        return postman.get(baseUrl, typeTag)
+        return postman.get(baseUrl, typeTag, token = token)
     }
 }

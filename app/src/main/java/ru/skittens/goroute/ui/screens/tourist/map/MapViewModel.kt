@@ -1,16 +1,15 @@
 package ru.skittens.goroute.ui.screens.tourist.map
 
 import android.location.Location
+import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import ru.skittens.domain.entity.Level
-import ru.skittens.domain.entity.Type
 import ru.skittens.domain.usecase.*
 import ru.skittens.goroute.LocationTracker
 
@@ -34,6 +33,7 @@ class MapViewModel(
     val descriptionState = mutableStateOf("")
     var currentLocation by mutableStateOf<Location?>(null)
     var topBarValue by mutableStateOf("")
+    var photos = mutableStateListOf<Uri>()
 
     fun loadLevels(){
         viewModelScope.launch(Dispatchers.IO) {

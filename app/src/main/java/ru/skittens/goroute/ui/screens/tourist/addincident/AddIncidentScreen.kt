@@ -1,8 +1,12 @@
 package ru.skittens.goroute.ui.screens.tourist.addincident
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -17,12 +21,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import org.koin.compose.koinInject
@@ -32,6 +38,7 @@ import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
+import ru.skittens.goroute.ui.screens.start.onboarding.FilledColorButton
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -48,6 +55,11 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION
         )
+    )
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents(),
+        onResult = { viewModel.photos.addAll(it) }
     )
 
 //1. when the app get launched for the first time
@@ -85,7 +97,8 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
         )
 
         TextField(
-            value = viewModel.currentLocation?.let { "Широта: ${it.latitude}, долгота: ${it.longitude}"} ?: "Проверьте подключение к GPS",
+            value = viewModel.currentLocation?.let { "Широта: ${it.latitude}, долгота: ${it.longitude}" }
+                ?: "Проверьте подключение к GPS",
             onValueChange = { },
             readOnly = true,
             modifier = Modifier
@@ -111,7 +124,9 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
         TextField(
             value = descriptionState.value,
             onValueChange = descriptionState::value::set,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
             label = { CaptionText("Описание происшествия", color = MaterialTheme.colorScheme.primary) },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
@@ -122,11 +137,47 @@ fun AddIncidentScreen(viewModel: MapViewModel = koinInject()) {
             shape = RoundedCornerShape(24.dp)
         )
 
-        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp), Arrangement.SpaceBetween, Alignment.CenterVertically
+        ) {
             ButtonText("Фотографии")
-            CustomTextButton("Добавить"){
-                
+            CustomTextButton("Добавить", color = MaterialTheme.colorScheme.primary) {
+                galleryLauncher.launch("image/*")
             }
+        }
+
+        BoxWithConstraints(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+
+            LazyRow(
+                Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(viewModel.photos) {
+                    AsyncImage(
+                        it,
+                        null,
+                        Modifier
+                            .size(this@BoxWithConstraints.maxWidth / 5)
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.weight(1f))
+        FilledColorButton(
+            "Добавить", modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            
         }
     }
 }
@@ -141,12 +192,14 @@ fun SelectVariantTextField(
     var expanded by remember { mutableStateOf(false) }
     val icon = if (expanded) painterResource(R.drawable.chevron_down) else painterResource(R.drawable.chevron_up)
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
-    Box(Modifier
-        .padding(horizontal = 18.dp)
-        .background(
-            color = Color(0xFFFFFFFF),
-            shape = RoundedCornerShape(size = 24.dp)
-    )) {
+    Box(
+        Modifier
+            .padding(horizontal = 18.dp)
+            .background(
+                color = Color(0xFFFFFFFF),
+                shape = RoundedCornerShape(size = 24.dp)
+            )
+    ) {
         TextField(
             value = selectedText,
             onValueChange = { },
@@ -159,7 +212,8 @@ fun SelectVariantTextField(
                 }
                 .background(
                     color = Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(size = 24.dp)),
+                    shape = RoundedCornerShape(size = 24.dp)
+                ),
             label = { BodyText(label, color = MaterialTheme.colorScheme.primary) },
             trailingIcon = {
                 Icon(
@@ -182,7 +236,8 @@ fun SelectVariantTextField(
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
                     .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
-                    .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                    .background(color = MaterialTheme.colorScheme.surface)
+                    .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 suggestions.forEach { label ->
@@ -192,9 +247,12 @@ fun SelectVariantTextField(
                     }, text = {
                         ButtonText(text = label)
                     }, modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
-                        .clip(RoundedCornerShape(24.dp)))
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                        .clip(RoundedCornerShape(24.dp))
+                    )
                 }
-        }}
+            }
+        }
     }
 }

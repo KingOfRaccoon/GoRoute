@@ -24,4 +24,7 @@ enum class Destinations(val title: String? = "") {
     Rating("Рейтинг"),
     Achievement("Достижения"),
     Event("Точка интереса"),
+    AllIncidents,
+    MapEmployee,
+    ProfileEmployee
 }

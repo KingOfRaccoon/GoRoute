@@ -1,17 +1,34 @@
 package ru.skittens.goroute.ui.screens.tourist.map
 
+import android.graphics.Bitmap
 import android.graphics.Color.parseColor
 import android.graphics.Typeface
-import android.text.*
-import android.text.style.*
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.URLSpan
+import android.text.style.UnderlineSpan
 import android.text.util.Linkify
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +36,32 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Minimize
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,13 +70,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import coil.compose.AsyncImage
 import com.mapbox.geojson.Point
@@ -47,6 +90,7 @@ import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.PolylineAnnotation
 import com.mapbox.maps.extension.localization.localizeLabels
@@ -64,8 +108,9 @@ import ru.skittens.goroute.ui.elements.PageIndicator
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
+import ru.skittens.goroute.ui.screens.start.onboarding.drawableToBitmap
 import ru.skittens.goroute.ui.screens.tourist.DefaultTopBar
-import java.util.*
+import java.util.Locale
 
 @OptIn(MapboxExperimental::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -80,8 +125,13 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
     val coroutineScope = rememberCoroutineScope()
     var bottomSheetState by remember { mutableStateOf(BottomSheetState.ParkOrArea) }
     val state = rememberMapViewportState {
-        setCameraOptions(CameraOptions.Builder().zoom(5.0).center(Point.fromLngLat(160.027, 57.124)).build())
+        setCameraOptions(
+            CameraOptions.Builder().zoom(5.0).center(Point.fromLngLat(160.027, 57.124)).build()
+        )
     }
+    val imageDrawable =
+        remember { ContextCompat.getDrawable(context, R.drawable.ic_pin) }
+    val bitmap = remember { drawableToBitmap(imageDrawable!!) }
 
     BackHandler(bottomSheetState != BottomSheetState.ParkOrArea) {
         bottomSheetState.previousState?.let {
@@ -147,7 +197,7 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
             }
 
             areas.data?.forEach { area ->
-                ParkOrAreaItem(area) {
+                ParkOrAreaItem(area, bitmap) {
                     if (currentId != area.id) {
                         bottomSheetState = BottomSheetState.ParkOrArea
                         isShowArea = true
@@ -156,8 +206,12 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
                         }
                         viewModel.setAreaOrParkId(area.id)
 
-                        Toast.makeText(context, "Меня зовут ${area.name}", Toast.LENGTH_SHORT).show()
-                        state.flyTo(CameraOptions.Builder().center(calculatePolygonCenter(it.points)).build())
+                        Toast.makeText(context, "Меня зовут ${area.name}", Toast.LENGTH_SHORT)
+                            .show()
+                        state.flyTo(
+                            CameraOptions.Builder().zoom(7.0)
+                                .center(calculatePolygonCenter(it.points)).build()
+                        )
 
                         true
                     } else {
@@ -167,6 +221,22 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
             }
         }
         DefaultTopBar()
+
+        Column(Modifier.align(Alignment.CenterEnd).padding(18.dp), Arrangement.spacedBy(10.dp)) {
+            IconButton(
+                { state.setCameraOptions { zoom((state.cameraState?.zoom ?: 1.0) + 1.0) } },
+                colors = IconButtonDefaults.iconButtonColors(Color.White)
+            ) {
+                Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.primary)
+            }
+
+            IconButton(
+                { state.setCameraOptions { zoom((state.cameraState?.zoom ?: 1.0) - 1.0) } },
+                colors = IconButtonDefaults.iconButtonColors(Color.White)
+            ) {
+                Icon(Icons.Default.Remove, null, tint = MaterialTheme.colorScheme.primary)
+            }
+        }
 
         FloatingActionButton(
             { navigateTo(Destinations.AddIncident) },
@@ -193,7 +263,7 @@ fun ParkOrAreaItem(park: Park, onClick: (PolygonAnnotation) -> Boolean) {
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun ParkOrAreaItem(area: Area, onClick: (PolygonAnnotation) -> Boolean) {
+fun ParkOrAreaItem(area: Area, iconPin: Bitmap, onClick: (PolygonAnnotation) -> Boolean) {
     area.getGeometryData().areas.forEach {
         println("ParkOrAreaItem")
         println(it.coordinates)
@@ -203,6 +273,10 @@ fun ParkOrAreaItem(area: Area, onClick: (PolygonAnnotation) -> Boolean) {
             fillOutlineColorInt = Color.Green.toArgb(),
             onClick = onClick
         )
+
+        PointAnnotation(calculatePolygonCenter(it.coordinates.map {
+            it.map { Point.fromLngLat(it[0], it[1]) }
+        }), iconPin)
     }
 }
 
@@ -381,7 +455,8 @@ fun AreaBottomSheet(
                 val uriHandler = LocalUriHandler.current
                 val body = SpannableString(Html.fromHtml(area.description))
                 body.setSpan(RelativeSizeSpan(1.3f), 0, 7, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-                val text = body.toAnnotateString(MaterialTheme.typography.bodyLarge, null, Color.Blue)
+                val text =
+                    body.toAnnotateString(MaterialTheme.typography.bodyLarge, null, Color.Blue)
                 val spannedText =
                     text.toSpannable() // превращаем в Spannable, так как Linkify работает со Spannable
                 Linkify.addLinks(spannedText, Linkify.WEB_URLS) // Ищем и размечаем URLSpan
@@ -439,9 +514,24 @@ fun Spanned.toAnnotateString(
                     )
                 }
 
-                is RelativeSizeSpan -> addStyle(SpanStyle(fontSize = span.sizeChange * textStyle.fontSize), start, end)
-                is UnderlineSpan -> addStyle(SpanStyle(textDecoration = TextDecoration.Underline), start, end)
-                is ForegroundColorSpan -> addStyle(SpanStyle(color = Color(span.foregroundColor)), start, end)
+                is RelativeSizeSpan -> addStyle(
+                    SpanStyle(fontSize = span.sizeChange * textStyle.fontSize),
+                    start,
+                    end
+                )
+
+                is UnderlineSpan -> addStyle(
+                    SpanStyle(textDecoration = TextDecoration.Underline),
+                    start,
+                    end
+                )
+
+                is ForegroundColorSpan -> addStyle(
+                    SpanStyle(color = Color(span.foregroundColor)),
+                    start,
+                    end
+                )
+
                 is URLSpan -> {
                     addStyle(
                         SpanStyle(

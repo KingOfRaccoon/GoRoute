@@ -121,7 +121,7 @@ fun AuthenticationScreen(
 //            CustomTextButton("Забыли пароль?", Modifier.align(Alignment.End)) { }
             Spacer(Modifier.weight(1f))
             FilledColorButton("Войти", onClick = viewModel::authenticationUser)
-            FilledColorButton("Создать аккаунт", MaterialTheme.colorScheme.onSurface.copy(.8f)) {
+            FilledColorButton("Создать аккаунт", MaterialTheme.colorScheme.onSurface.copy(.9f)) {
                 navigateTo(Destinations.Registration)
             }
             Spacer(Modifier.height(20.dp))
@@ -196,6 +196,30 @@ fun LoginTextField(login: String, updateLogin: (String) -> Unit) {
         placeholder = {
             ButtonText(
                 "Почта",
+                color = MaterialTheme.colorScheme.onBackground.copy(.4f)
+            )
+        },
+        visualTransformation = VisualTransformation.None,
+    )
+}
+
+@Composable
+fun NameTextField(login: String, updateLogin: (String) -> Unit) {
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(24.dp),
+        value = login,
+        onValueChange = updateLogin,
+        singleLine = true,
+        placeholder = {
+            ButtonText(
+                "Имя",
                 color = MaterialTheme.colorScheme.onBackground.copy(.4f)
             )
         },

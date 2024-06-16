@@ -34,6 +34,7 @@ import ru.skittens.goroute.ui.navigation.NavigationFun
 import ru.skittens.goroute.ui.screens.start.AuthenticationViewModel
 import ru.skittens.goroute.ui.screens.start.authentication.LoginTextField
 import ru.skittens.goroute.ui.screens.start.authentication.MainTitle
+import ru.skittens.goroute.ui.screens.start.authentication.NameTextField
 import ru.skittens.goroute.ui.screens.start.authentication.PasswordTextField
 import ru.skittens.goroute.ui.screens.start.onboarding.FilledColorButton
 import ru.skittens.goroute.ui.screens.start.onboarding.drawableToBitmap
@@ -103,14 +104,15 @@ fun RegistrationScreen(
                     .fillMaxWidth(0.3f)
                     .aspectRatio(1f)
             )
-            Spacer(Modifier.height(90.dp))
+            Spacer(Modifier.height(40.dp))
 
-            LoginTextField(viewModel.fullName, viewModel::fullName::set)
+            NameTextField(viewModel.fullName, viewModel::fullName::set)
             LoginTextField(viewModel.login, viewModel::login::set)
             PasswordTextField(viewModel.password, viewModel::password::set)
 
             Spacer(Modifier.weight(1f))
             FilledColorButton("Создать аккаунт", onClick = viewModel::registrationUser)
+//            Spacer(Modifier.height(12.dp))
             FilledColorButton("У меня есть аккаунт", MaterialTheme.colorScheme.onSurface.copy(.8f)) {
                 navigateTo(Destinations.Authentication)
             }

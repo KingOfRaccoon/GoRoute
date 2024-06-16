@@ -2,6 +2,7 @@ package ru.skittens.goroute.ui.screens.tourist.selectroute
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,15 +18,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -49,10 +54,26 @@ import kotlin.math.*
 fun SelectRouteScreen(navigateTo: NavigationFun, selectRouteViewModel: SelectRouteViewModel = koinInject()) {
     val routes by selectRouteViewModel.routes.collectAsState(Resource.Loading())
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    LazyColumn(Modifier.fillMaxSize(),
+    ) {
         stickyHeader {
-            Row(Modifier.fillMaxWidth(), Arrangement.Center) {
+            Row(Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp)
+                .background(Color(0xFFF9F9F9)),
+                Arrangement.Center,
+                Alignment.CenterVertically) {
+
+                IconButton(onClick = {  }, Modifier.background(Color(0xFFF9F9F9))) {
+                    Image(
+                        painterResource(R.drawable.filters),
+                        null,
+                        Modifier.background(Color(0xFFF9F9F9))
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
                 BodyText("${routes.data?.size ?: 0} маршрутов", textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.weight(1.5f))
             }
         }
 
@@ -67,7 +88,8 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
         Modifier
             .fillMaxWidth()
             .aspectRatio(1.5f)
-            .padding(18.dp)
+            .padding(vertical = 6.dp, horizontal = 18.dp)
+            .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
     ) {
         Box(
             Modifier
@@ -75,7 +97,7 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
                 .weight(2f)
         ) {
             Image(
-                rememberAsyncImagePainter(R.drawable.backgroung_onboarding),
+                painterResource(R.drawable.backgroung_onboarding),
                 null,
                 Modifier.fillMaxSize(),
                 Alignment.Center,

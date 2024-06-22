@@ -1,29 +1,14 @@
 package ru.skittens.goroute.ui.screens.tourist.permission
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import android.widget.Toast
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.CalendarViewMonth
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,22 +27,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import org.koin.compose.koinInject
 import ru.skittens.goroute.R
-import ru.skittens.goroute.ui.elements.BodyText
-import ru.skittens.goroute.ui.elements.ButtonText
-import ru.skittens.goroute.ui.elements.CaptionText
-import ru.skittens.goroute.ui.elements.TitleText
+import ru.skittens.goroute.ui.elements.*
+import ru.skittens.goroute.ui.navigation.Destinations
+import ru.skittens.goroute.ui.navigation.NavigationFun
+import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
+import ru.skittens.goroute.ui.screens.start.onboarding.FilledColorButton
 import ru.skittens.goroute.ui.screens.tourist.addincident.SelectVariantTextField
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
+
 @Composable
-fun PermissionScreen() {
-    Column(Modifier.padding(horizontal = 18.dp)) {
+fun PermissionScreen(navigateTo: NavigationFun) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 18.dp)
+    ) {
         Card(({  }),
             Modifier
                 .fillMaxWidth()
@@ -117,25 +110,94 @@ fun PermissionScreen() {
         Spacer(Modifier.height(12.dp))
         DropdownTextField("Тип разрешения")
         Spacer(Modifier.height(12.dp))
-        OutLineTextFieldSample("Заголовоооок")
+
+        Row(
+            Modifier.fillMaxWidth(),
+            Arrangement.SpaceEvenly,
+            Alignment.CenterVertically
+        ){
+            Box(Modifier.weight(1f)){
+                OutLineDateField("Прибытие")
+            }
+            Spacer(Modifier.width(12.dp))
+            Box(Modifier.weight(1f)){
+                OutLineDateField("Отбытие")
+            }
+        }
+
+
+        Spacer(Modifier.height(18.dp))
+        HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
+        Spacer(Modifier.height(12.dp))
+
+        Row(
+            Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
+            Arrangement.SpaceBetween,
+            Alignment.CenterVertically
+        ) {
+            TitleText("Группа")
+            CustomTextButton("создать новую", color = MaterialTheme.colorScheme.primary) {
+                navigateTo(Destinations.AddGroup)
+            }
+        }
+        DropdownTextField("Выберите группу")
+
+        Row(
+            Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
+            Arrangement.SpaceBetween,
+            Alignment.CenterVertically
+        ) {
+            TitleText("Руководитель")
+            CustomTextButton("добавить", color = MaterialTheme.colorScheme.primary) {
+                navigateTo(Destinations.AddGroup) //TODO create AddDirector
+            }
+        }
+        DropdownTextField("Выберите пользователя")
+
+        Spacer(Modifier.height(18.dp))
+        HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
+        Spacer(Modifier.height(12.dp))
+
+        DropdownTextField("Способ перемещения")
+        Spacer(Modifier.height(12.dp))
+        DropdownTextField("Цель посещения")
+
+        Spacer(Modifier.height(24.dp))
+
+        FilledColorButton(
+            "Отправить заявку", modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp)
+        ) {
+
+        }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OutLineTextFieldSample(title: String) {
+fun OutLineDateField(title: String) {
     var text by remember { mutableStateOf(TextFieldValue("")) }
     TextField(
         value = text,
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         onValueChange = { text = it },
         label = { BodyText(text = title, textAlign = TextAlign.Center,) },
+        leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = "Календарь") },
         shape = RoundedCornerShape(size = 24.dp),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+            disabledIndicatorColor = Color.Transparent,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            focusedPrefixColor = MaterialTheme.colorScheme.primary,
+            focusedSuffixColor = MaterialTheme.colorScheme.primary,
         ),
         modifier = Modifier
-            .fillMaxWidth()
+//            .requiredWidth(width)
+            .fillMaxWidth(1f)
             .shadow(
                 elevation = 24.dp,
                 spotColor = Color(0x0D000000),

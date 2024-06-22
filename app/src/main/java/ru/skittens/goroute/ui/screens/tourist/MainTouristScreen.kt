@@ -128,7 +128,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
 
             composable(Destinations.Group) {
                 // TODO это экран группы
-                GroupScreen()
+                GroupScreen(navHostController::navigate)
             }
 
             composable(Destinations.AddGroup) {
@@ -142,7 +142,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
 
             composable(Destinations.Permission) {
                 // TODO это экран получения разрешения
-                PermissionScreen()
+                PermissionScreen(navHostController::navigate)
             }
 
             composable(Destinations.AddIncident) {

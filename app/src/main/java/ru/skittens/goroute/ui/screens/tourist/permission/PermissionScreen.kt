@@ -130,13 +130,8 @@ fun PermissionScreen(navigateTo: NavigationFun) {
         HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
         Spacer(Modifier.height(12.dp))
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(18.dp, 0.dp, 0.dp, 0.dp,),
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically
-        ) {
+        Row(Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
+            Arrangement.SpaceBetween, Alignment.CenterVertically) {
             TitleText("Группа")
             CustomTextButton("создать новую", color = MaterialTheme.colorScheme.primary) {
                 navigateTo(Destinations.AddGroup)
@@ -144,11 +139,7 @@ fun PermissionScreen(navigateTo: NavigationFun) {
         }
         DropdownTextField("Выберите группу")
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(18.dp, 12.dp, 0.dp, 0.dp,),
-        ) {
+        Row(Modifier.fillMaxWidth().padding(18.dp, 12.dp, 0.dp, 0.dp,),) {
             TitleText("Руководитель")
         }
         Spacer(Modifier.height(6.dp))
@@ -158,6 +149,10 @@ fun PermissionScreen(navigateTo: NavigationFun) {
         HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
         Spacer(Modifier.height(12.dp))
 
+        Row(Modifier.fillMaxWidth().padding(18.dp, 12.dp, 0.dp, 0.dp,),) {
+            TitleText("Дополнительная информация")
+        }
+        Spacer(Modifier.height(12.dp))
         DropdownTextField("Способ перемещения")
         Spacer(Modifier.height(12.dp))
         DropdownTextField("Цель посещения")

@@ -51,7 +51,7 @@ fun PermissionScreen(navigateTo: NavigationFun) {
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp)
     ) {
-        Card(({  }),
+        Card(
             Modifier
                 .fillMaxWidth()
                 .aspectRatio(4f)
@@ -92,7 +92,7 @@ fun PermissionScreen(navigateTo: NavigationFun) {
                             Spacer(Modifier.width(6.dp))
                             CaptionText("Природный парк Налычево", Modifier.padding(top = 18.dp), color = Color(0xFF01A451),)
                             Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = {  },
+                            IconButton(onClick = { navigateTo(Destinations.SelectRoute) },
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.edit),
@@ -131,7 +131,9 @@ fun PermissionScreen(navigateTo: NavigationFun) {
         Spacer(Modifier.height(12.dp))
 
         Row(
-            Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp, 0.dp, 0.dp, 0.dp,),
             Arrangement.SpaceBetween,
             Alignment.CenterVertically
         ) {
@@ -143,15 +145,13 @@ fun PermissionScreen(navigateTo: NavigationFun) {
         DropdownTextField("Выберите группу")
 
         Row(
-            Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp, 12.dp, 0.dp, 0.dp,),
         ) {
             TitleText("Руководитель")
-            CustomTextButton("добавить", color = MaterialTheme.colorScheme.primary) {
-                navigateTo(Destinations.AddGroup) //TODO create AddDirector
-            }
         }
+        Spacer(Modifier.height(6.dp))
         DropdownTextField("Выберите пользователя")
 
         Spacer(Modifier.height(18.dp))
@@ -196,7 +196,6 @@ fun OutLineDateField(title: String) {
             focusedSuffixColor = MaterialTheme.colorScheme.primary,
         ),
         modifier = Modifier
-//            .requiredWidth(width)
             .fillMaxWidth(1f)
             .shadow(
                 elevation = 24.dp,
@@ -254,7 +253,12 @@ fun DropdownTextField(title: String){
                 }, text = {
                     ButtonText(text = label)
                 }, modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface).shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                    .background(color = MaterialTheme.colorScheme.surface)
+                    .shadow(
+                        elevation = 24.dp,
+                        spotColor = Color(0x0D000000),
+                        ambientColor = Color(0x0D000000)
+                    )
                     .clip(RoundedCornerShape(24.dp)))
 
             }

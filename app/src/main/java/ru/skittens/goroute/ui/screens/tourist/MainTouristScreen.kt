@@ -133,7 +133,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
 
             composable(Destinations.AddGroup) {
                 // TODO это экран добавления группы
-                AddGroupScreen()
+                AddGroupScreen(navHostController::navigate)
             }
 
             composable(Destinations.Map) {

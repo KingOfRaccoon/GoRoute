@@ -1,10 +1,14 @@
 package ru.skittens.goroute.ui.screens.employee
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,11 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.BodyText
+import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
 import ru.skittens.goroute.ui.screens.employee.allincidents.AllIncidentsScreen
+import ru.skittens.goroute.ui.screens.employee.incident.IncidentScreen
+import ru.skittens.goroute.ui.screens.tourist.BackTopBar
 import ru.skittens.goroute.ui.screens.tourist.DefaultTopBar
 import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
 import ru.skittens.goroute.ui.screens.tourist.profile.ProfileScreen
@@ -37,7 +45,7 @@ fun MainEmployeeScreen() {
 
     Scaffold(
         Modifier.fillMaxSize(),
-        topBar = { DefaultTopBar() },
+        topBar = { DefaultTopBarEmployee() },
         bottomBar = {
             AnimatedVisibility(
                 currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.destinations.name },
@@ -87,12 +95,60 @@ fun MainEmployeeScreen() {
             }
 
             composable(Destinations.AllIncidents){
-                AllIncidentsScreen()
+                AllIncidentsScreen(navHostController::navigate)
             }
 
             composable(Destinations.Profile){
                 ProfileScreen()
             }
+            composable(Destinations.Incident){
+                IncidentScreen(navHostController::navigate)
+            }
         }
     }
+}
+@Composable
+fun MainTopBarEmployee(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
+//    AnimatedContent(destinations) {
+    when (destinations) {
+        Destinations.Group, Destinations.FiltersRoutes, Destinations.Permission, Destinations.AddIncident, Destinations.Incident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.Route, Destinations.AddGroup -> {
+            BackTopBar(destinations, topBarValue, onBackStack)
+        }
+
+        Destinations.Profile, Destinations.Routes -> {
+            DefaultTopBar()
+        }
+
+        Destinations.Map -> {}
+        Destinations.NewsFriends -> {}
+        else -> {}
+    }
+//    }
+}
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun DefaultTopBarEmployee() {
+    TopAppBar(
+        {},
+        Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+        { Image(painterResource(R.drawable.logo_small), null) },
+        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent)
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun BackTopBar(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
+    TopAppBar(
+        {
+            TitleText(destinations.title ?: topBarValue)
+        },
+        Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+        { IconButton(onBackStack) { Image(Icons.AutoMirrored.Filled.ArrowBack, null) } },
+        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent)
+    )
 }

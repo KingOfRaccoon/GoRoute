@@ -2,6 +2,7 @@ package ru.skittens.goroute.ui.screens.employee.allincidents
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,10 +22,12 @@ import ru.skittens.goroute.ui.elements.BodyText
 import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
+import ru.skittens.goroute.ui.navigation.Destinations
+import ru.skittens.goroute.ui.navigation.NavigationFun
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AllIncidentsScreen(viewModel: AllIncidentsViewModel = koinInject()) {
+fun AllIncidentsScreen(navigateTo: NavigationFun, viewModel: AllIncidentsViewModel = koinInject(), ) {
     val incidents by viewModel.incidents.collectAsState()
 
     LazyColumn(
@@ -37,7 +40,8 @@ fun AllIncidentsScreen(viewModel: AllIncidentsViewModel = koinInject()) {
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp),
+                    .background(Color(0xFFF9F9F9))
+                    .padding(horizontal = 18.dp, vertical = 4.dp),
                 Arrangement.spacedBy(8.dp),
                 Alignment.CenterVertically
             ) {
@@ -49,7 +53,9 @@ fun AllIncidentsScreen(viewModel: AllIncidentsViewModel = koinInject()) {
         }
 
         items(incidents.data.orEmpty()) {
-            Card(Modifier.fillMaxWidth()) {
+            Card(Modifier.fillMaxWidth().clickable {
+                navigateTo(Destinations.Incident)
+            }) {
                 Column(
                     Modifier
                         .fillMaxWidth()
@@ -77,10 +83,20 @@ fun AllIncidentsScreen(viewModel: AllIncidentsViewModel = koinInject()) {
         }
 
         stickyHeader {
-            TitleText("В обработке",
+            Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp))
+                    .background(Color(0xFFF9F9F9))
+                    .padding(horizontal = 18.dp, vertical = 4.dp),
+                Arrangement.spacedBy(8.dp),
+                Alignment.CenterVertically
+            ) {
+                TitleText(
+                    "В обработке",
+                    Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
 
         item {

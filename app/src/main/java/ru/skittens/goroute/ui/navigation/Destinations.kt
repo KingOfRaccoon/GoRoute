@@ -12,6 +12,7 @@ enum class Destinations(val title: String? = "") {
     NewRoute("Новый поход"),
     EndedRoutes,
     SelectRoute(null),
+    FiltersRoutes("Фильтры"),
     SelectParkOrSight("Новый поход"),
     AddGroup("Новая группа"),
     Group,

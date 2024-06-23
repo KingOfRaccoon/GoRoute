@@ -20,12 +20,15 @@ class MapViewModel(
     private val getRoutesForChooseUseCase: GetRoutesForChooseUseCase,
     private val getLevelsUseCase: GetLevelsUseCase,
     private val getTypesUseCase: GetTypesUseCase,
+    private val getFilterAreasUseCase: GetFilterAreasUseCase,
     private val locationTracker: LocationTracker
 ) : ViewModel() {
     val parksFlow = getParksUseCase.parksFlow
+    val filteredAreasFlow = getFilterAreasUseCase.filteredAreasFlow
     val areasFlow = getAreasUseCase.areasFlow
     val routesFlow = getRoutesForSelectedAreaOrPark.routesFlow
     val currentIdFlow = getRoutesForSelectedAreaOrPark.selectedIdFlow
+    val filtersFlow = getFilterAreasUseCase.filtersFlow
     val levelsFlow = getLevelsUseCase.levels
     val typesFlow = getTypesUseCase.types
     val selectedLevelState = mutableStateOf("")
@@ -34,6 +37,9 @@ class MapViewModel(
     var currentLocation by mutableStateOf<Location?>(null)
     var topBarValue by mutableStateOf("")
     var photos = mutableStateListOf<Uri>()
+
+    fun addFilter(newFilter: String) = getFilterAreasUseCase(newFilter)
+    fun addFilters(filters: List<String>) = getFilterAreasUseCase.addListFilter(filters)
 
     fun loadLevels(){
         viewModelScope.launch(Dispatchers.IO) {

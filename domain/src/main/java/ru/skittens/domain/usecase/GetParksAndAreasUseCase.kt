@@ -5,9 +5,9 @@ import ru.skittens.domain.repository.ParkRepository
 import ru.skittens.domain.repository.UserRepository
 import kotlin.math.abs
 
-class GetAreasAndParksUseCase(private val userRepository: UserRepository, private val parkRepository: ParkRepository) {
-    val areasFlow = parkRepository.areasFlow
-    val parksFlow = parkRepository.parksFlow
+class GetParksAndAreasUseCase(private val userRepository: UserRepository, private val parkRepository: ParkRepository) {
+    private val areasFlow = parkRepository.areasFlow
+    private val parksFlow = parkRepository.parksFlow
 
     val diffFlow = combine(areasFlow, parksFlow) { areas, parks ->
         areas.data?.associateBy { area ->
@@ -95,5 +95,4 @@ class GetAreasAndParksUseCase(private val userRepository: UserRepository, privat
         return p[1] >= minOf(p1[1], p2[1]) && p[1] <= maxOf(p1[1], p2[1]) &&
             p[0] >= minOf(p1[0], p2[0]) && p[0] <= maxOf(p1[0], p2[0])
     }
-
 }

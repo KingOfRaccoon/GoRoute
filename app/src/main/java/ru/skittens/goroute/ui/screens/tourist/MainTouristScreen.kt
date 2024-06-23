@@ -1,6 +1,10 @@
 package ru.skittens.goroute.ui.screens.tourist
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +14,16 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -19,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -34,6 +46,7 @@ import ru.skittens.goroute.ui.navigation.navigate
 import ru.skittens.goroute.ui.screens.tourist.addgroup.AddGroupScreen
 import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentScreen
 import ru.skittens.goroute.ui.screens.tourist.endedroutes.EndedRoutesScreen
+import ru.skittens.goroute.ui.screens.tourist.filterroutes.FilterRoutesScreen
 import ru.skittens.goroute.ui.screens.tourist.group.GroupScreen
 import ru.skittens.goroute.ui.screens.tourist.map.MapScreen
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
@@ -49,14 +62,20 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
     val navHostController = rememberNavController()
     val currentEntity by navHostController.currentBackStackEntryAsState()
     val currentDestinations = remember(currentEntity) {
-        Destinations.entries.find { it.name == currentEntity?.destination?.route } ?: Destinations.Map
+        Destinations.entries.find { it.name == currentEntity?.destination?.route }
+            ?: Destinations.Map
     }
 
     Scaffold(
         Modifier
             .fillMaxSize()
             .systemBarsPadding(),
-        topBar = { MainTopBar(currentDestinations, viewModel.topBarValue) { navHostController.popBackStack() } },
+        topBar = {
+            MainTopBar(
+                currentDestinations,
+                viewModel.topBarValue
+            ) { navHostController.popBackStack() }
+        },
         bottomBar = {
             AnimatedVisibility(
                 currentEntity?.destination?.route in arrayOf(
@@ -122,13 +141,15 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.EndedRoutes) {
-                // TODO это экран завершенных маршрутов
                 EndedRoutesScreen()
             }
 
             composable(Destinations.Group) {
-                // TODO это экран группы
                 GroupScreen(navHostController::navigate)
+            }
+
+            composable(Destinations.FiltersRoutes) {
+                FilterRoutesScreen()
             }
 
             composable(Destinations.AddGroup) {
@@ -141,7 +162,6 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.Permission) {
-                // TODO это экран получения разрешения
                 PermissionScreen(navHostController::navigate)
             }
 
@@ -150,7 +170,6 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.Profile) {
-                // FIxme экран профиля
                 ProfileScreen()
             }
         }
@@ -160,19 +179,19 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
 @Composable
 fun MainTopBar(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
 //    AnimatedContent(destinations) {
-        when (destinations) {
-            Destinations.Group, Destinations.Permission, Destinations.AddIncident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.AddGroup -> {
-                BackTopBar(destinations, topBarValue, onBackStack)
-            }
-
-            Destinations.Profile, Destinations.Routes -> {
-                DefaultTopBar()
-            }
-
-            Destinations.Map -> {}
-            Destinations.NewsFriends -> {}
-            else -> {}
+    when (destinations) {
+        Destinations.Group, Destinations.FiltersRoutes, Destinations.Permission, Destinations.AddIncident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.AddGroup -> {
+            BackTopBar(destinations, topBarValue, onBackStack)
         }
+
+        Destinations.Profile, Destinations.Routes -> {
+            DefaultTopBar()
+        }
+
+        Destinations.Map -> {}
+        Destinations.NewsFriends -> {}
+        else -> {}
+    }
 //    }
 }
 

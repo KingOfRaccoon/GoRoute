@@ -8,7 +8,11 @@ import ru.skittens.domain.entity.RouteLength
 import ru.skittens.domain.repository.ParkRepository
 import ru.skittens.domain.repository.UserRepository
 import java.math.RoundingMode
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class GetRoutesForChooseUseCase(
     private val userRepository: UserRepository,
@@ -17,16 +21,27 @@ class GetRoutesForChooseUseCase(
     private val routes = parkRepository.routesFlow
     private val selectedId = MutableStateFlow<String?>(null)
     private val routeLengthMapFlow = MutableStateFlow(RouteLength())
+    val seasonalityFlow = MutableStateFlow("")
+    val typeRouteFlow = MutableStateFlow("")
+    val conditionsFlow = MutableStateFlow("")
+    val typeWayFlow = MutableStateFlow("")
+    val difficultyFlow = MutableStateFlow("")
 
-    val routesForChooseFlow = combine(routes, selectedId, routeLengthMapFlow) { routes, id, length ->
-        if (id.isNullOrEmpty())
-            when (routes) {
-                is Resource.Error -> Resource.Error(routes.message)
-                is Resource.Loading -> Resource.Loading()
-                is Resource.Success -> Resource.Success(routes.data
-                    .filter {it.getPathData().isNotEmpty()}
-                    .map { it.copy(length = length.map[it.id] ?: 0.0) }.also {
-                        it.forEach { route ->
+    val seasonalityListFlow = MutableStateFlow(List(3) { "Сезонность $it" })
+    val typeRouteListFlow = MutableStateFlow(List(3) { "Тип маршрута $it" })
+    val conditionsListFlow = MutableStateFlow(List(3) { "Условия посещения $it" })
+    val typeWayListFlow = MutableStateFlow(List(3) { "Способ перемещения $it" })
+    val difficultyListFlow = MutableStateFlow(List(3) { "Сложность $it" })
+
+    val routesForChooseFlow =
+        combine(routes, selectedId, routeLengthMapFlow) { routes, id, length ->
+            if (id.isNullOrEmpty())
+                when (routes) {
+                    is Resource.Error -> Resource.Error(routes.message)
+                    is Resource.Loading -> Resource.Loading()
+                    is Resource.Success -> Resource.Success(routes.data
+                        .filter { it.getPathData().isNotEmpty() }
+                        .map { it.copy(length = length.map[it.id] ?: 0.0) }.onEach { route ->
                             val points = route.getPathData().map { it.points }.flatten()
                             if (points.isNotEmpty())
                                 routeLengthMapFlow.update {
@@ -37,20 +52,18 @@ class GetRoutesForChooseUseCase(
                                             points.last()[1],
                                             points.last()[0]
                                         ))).toMutableMap()
-                                    ).also { println("routeLengthMapFlow: $it") }
+                                    )
                                 }
-                        }
-                    })
-            }
-        else
-            when (routes) {
-                is Resource.Error -> Resource.Error(routes.message)
-                is Resource.Loading -> Resource.Loading()
-                is Resource.Success -> Resource.Success(routes.data.filter {
-                    it.areaId == id && it.getPathData().isNotEmpty()
+                        })
                 }
-                    .map { it.copy(length = length.map[it.id] ?: 0.0) }.also {
-                        it.forEach { route ->
+            else
+                when (routes) {
+                    is Resource.Error -> Resource.Error(routes.message)
+                    is Resource.Loading -> Resource.Loading()
+                    is Resource.Success -> Resource.Success(routes.data.filter {
+                        it.areaId == id && it.getPathData().isNotEmpty()
+                    }
+                        .map { it.copy(length = length.map[it.id] ?: 0.0) }.onEach { route ->
                             val points = route.getPathData().map { it.points }.flatten()
                             if (points.isNotEmpty())
                                 routeLengthMapFlow.update {
@@ -61,12 +74,26 @@ class GetRoutesForChooseUseCase(
                                             points.last()[1],
                                             points.last()[0]
                                         ))).toMutableMap()
-                                    ).also { println("routeLengthMapFlow: $it") }
+                                    )
                                 }
-                        }
-                    })
-            }
-    }
+                        })
+                }
+        }
+
+    fun setSeasonality(newSeasonality: String) =
+        seasonalityFlow.update { if (it != newSeasonality) newSeasonality else "" }
+
+    fun setTypeRoute(newTypeRoute: String) =
+        typeRouteFlow.update { if (it != newTypeRoute) newTypeRoute else "" }
+
+    fun setConditions(newConditions: String) =
+        conditionsFlow.update { if (it != newConditions) newConditions else "" }
+
+    fun setTypeWay(newTypeWay: String) =
+        typeWayFlow.update { if (it != newTypeWay) newTypeWay else "" }
+
+    fun setDifficulty(newDifficulty: String) =
+        difficultyFlow.update { if (it != newDifficulty) newDifficulty else "" }
 
     fun setId(newId: String?) {
         selectedId.update {

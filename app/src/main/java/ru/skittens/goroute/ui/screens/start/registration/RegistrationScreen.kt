@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,7 +60,7 @@ fun RegistrationScreen(
             when (user.data?.role) {
                 "USER" -> navigateTo(Destinations.MainTourist)
                 "MODERATOR" -> navigateTo(Destinations.MainEmployee)
-                "ADMIN" -> navigateTo(Destinations.MainAdmin)
+                "ADMIN" -> navigateTo(Destinations.MainEmployee)
                 else -> navigateTo(Destinations.MainTourist)
             }
     }

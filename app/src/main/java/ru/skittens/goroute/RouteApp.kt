@@ -4,8 +4,6 @@ import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.mapbox.common.MapboxOptions
-import com.mapbox.maps.mapsOptions
-import com.mapbox.maps.plugin.Plugin.Mapbox
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -26,6 +24,7 @@ import ru.skittens.goroute.ui.screens.employee.allincidents.AllIncidentsViewMode
 import ru.skittens.goroute.ui.screens.start.AuthenticationViewModel
 import ru.skittens.goroute.ui.screens.start.authentication.getScreenSize
 import ru.skittens.goroute.ui.screens.start.onboarding.OnboardingViewModel
+import ru.skittens.goroute.ui.screens.tourist.filterroutes.FilterRoutesViewModel
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.selectroute.SelectRouteViewModel
 
@@ -49,17 +48,19 @@ class RouteApp : Application() {
         single { GetAreasUseCase(get(), get()) }
         single { GetLevelsUseCase(get(), get()) }
         single { GetTypesUseCase(get(), get()) }
-        single { GetAreasAndParksUseCase(get(), get()) }
+        single { GetParksAndAreasUseCase(get(), get()) }
         single { GetRoutesForSelectedAreaOrPark(get(), get()) }
         single { GetRoutesForChooseUseCase(get(), get()) }
         single { UserDataUseCase(get()) }
         single { IncidentsUseCase(get(), get()) }
+        single { GetFilterAreasUseCase(get()) }
 
         single { SelectRouteViewModel(get()) }
         single { OnboardingViewModel() }
         single { AuthenticationViewModel(get()) }
-        single { MapViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        single { MapViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
         single { AllIncidentsViewModel(get()) }
+        single { FilterRoutesViewModel(get()) }
     }
 
     override fun onCreate() {

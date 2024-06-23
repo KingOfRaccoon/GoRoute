@@ -95,7 +95,7 @@ fun SplashScreen(
                     when(user.data?.role){
                         "USER" -> navigateTo(Destinations.MainTourist)
                         "MODERATOR" -> navigateTo(Destinations.MainEmployee)
-                        "ADMIN" -> navigateTo(Destinations.MainAdmin)
+                        "ADMIN" -> navigateTo(Destinations.MainEmployee)
                         else -> navigateTo(Destinations.MainTourist)
                     }
                 else if (user is Resource.Error)

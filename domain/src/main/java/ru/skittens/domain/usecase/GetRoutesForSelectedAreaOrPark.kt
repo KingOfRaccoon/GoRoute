@@ -10,8 +10,6 @@ import ru.skittens.domain.repository.UserRepository
 class GetRoutesForSelectedAreaOrPark(private val userRepository: UserRepository, private val parkRepository: ParkRepository) {
     val selectedIdFlow = MutableStateFlow("")
     val routesFlow = combine(parkRepository.routesFlow, selectedIdFlow) { routes, id ->
-        println("newId: $id")
-        println("data on newId: " + routes.data?.filter { it.areaId == id || it.routeId == id })
         when(routes){
             is Resource.Error -> Resource.Error(routes.message)
             is Resource.Loading -> Resource.Loading()

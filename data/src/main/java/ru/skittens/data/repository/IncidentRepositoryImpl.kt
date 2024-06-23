@@ -8,6 +8,7 @@ import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.data.source.network.incidents.IncidentsService
 import ru.skittens.domain.entity.EmployeeStatus
 import ru.skittens.domain.entity.Incident
+import ru.skittens.domain.entity.IncidentRequest
 import ru.skittens.domain.entity.Status
 import ru.skittens.domain.repository.IncidentRepository
 
@@ -21,8 +22,8 @@ class IncidentRepositoryImpl(private val incidentsService: IncidentsService): In
         }
     }
 
-    override suspend fun addIncident(incident: Incident, token: String): Resource<Incident> {
-        return incidentsService.addIncident(incident, token)
+    override suspend fun addIncident(incident: IncidentRequest, file: ByteArray, token: String): Resource<Incident> {
+        return incidentsService.addIncident(incident, file, token)
     }
 
     override suspend fun updateStatus(status: Status, token: String): Resource<String> {

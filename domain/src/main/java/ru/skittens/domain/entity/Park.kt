@@ -11,7 +11,7 @@ data class Park(
     val color: String,
     val description: String? = null,
     val name: String,
-    val parkContacts: String? = null,
+    val parkContacts: List<ParkContact> = listOf(),
     val parkPhotos: List<ParkPhoto> = listOf(),
     val points: String,
     val siteUrl: String? = null,

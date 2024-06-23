@@ -150,6 +150,8 @@ class Postman {
         route: String,
         headers: Map<String, Any> = mapOf(),
         arguments: List<PartData> = listOf(),
+        body: Any? = null,
+        token: String? = null,
         contentType: ContentType = Json
     ): Resource<T> {
         semaphore.withPermit {
@@ -162,9 +164,15 @@ class Postman {
                     arguments
                 ) {
                     contentType(contentType)
+
                     headers.forEach {
                         header(it.key, it.value)
                     }
+                    if (token != null)
+                        bearerAuth(token)
+
+                    if (body != null)
+                        setBody(body)
                 }
 
                 obtainResult(http)

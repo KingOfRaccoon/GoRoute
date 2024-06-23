@@ -4,11 +4,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Incident(
+    val comment: String,
+    val date: String,
+    val employeesCross: List<UserIncident>,
     val id: Int,
     val incidentPhotos: List<ParkPhoto>,
-    val employeeXIncidents: List<User>,
-    val incidentStatusXIncidents: List<Status>,
+    val incidentStatus: List<IncidentStatusItem>,
+    val incidentType: IncidentType,
     val latitude: Double,
     val longitude: Double,
-    val comment: String
+    val threatDegree: ThreatDegree,
+    val user: List<UserIncident>
 )

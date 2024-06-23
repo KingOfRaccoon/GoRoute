@@ -1,27 +1,46 @@
 package ru.skittens.goroute.ui.screens.tourist.addincident
 
+import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material3.*
-import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
-import androidx.compose.runtime.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +53,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import org.koin.compose.koinInject
+import ru.skittens.domain.entity.IncidentRequest
 import ru.skittens.goroute.R
 import ru.skittens.goroute.ui.elements.BodyText
 import ru.skittens.goroute.ui.elements.ButtonText
@@ -42,10 +62,15 @@ import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
 import ru.skittens.goroute.ui.screens.start.onboarding.FilledColorButton
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
+import java.io.IOException
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinInject()) {
+fun AddIncidentScreen(
+    navigateBack: () -> Unit,
+    viewModel: MapViewModel = koinInject(),
+    addIncidentViewModel: AddIncidentViewModel = koinInject()
+) {
     val levels by viewModel.levelsFlow.collectAsState()
     val types by viewModel.typesFlow.collectAsState()
     val selectedLevel = viewModel.selectedLevelState
@@ -65,7 +90,6 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
         onResult = { viewModel.photos.addAll(it) }
     )
 
-//1. when the app get launched for the first time
     LaunchedEffect(Unit) {
         locationPermissions.launchMultiplePermissionRequest()
     }
@@ -84,7 +108,11 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
 
     println("latitude: ${viewModel.currentLocation?.latitude}: longitude: ${viewModel.currentLocation?.longitude}")
 
-    Column(Modifier.fillMaxSize(), Arrangement.spacedBy(12.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 18.dp), Arrangement.spacedBy(12.dp)
+    ) {
         TitleText(
             "Сообщить о проблеме",
             Modifier
@@ -104,9 +132,7 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
                 ?: "Проверьте подключение к GPS",
             onValueChange = { },
             readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { BodyText("Геолокация", color = MaterialTheme.colorScheme.primary) },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
@@ -127,10 +153,13 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
         TextField(
             value = descriptionState.value,
             onValueChange = descriptionState::value::set,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
-            label = { CaptionText("Описание происшествия", color = MaterialTheme.colorScheme.primary) },
+            modifier = Modifier.fillMaxWidth(),
+            label = {
+                CaptionText(
+                    "Описание происшествия",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
             colors = TextFieldDefaults.colors(
                 disabledIndicatorColor = Color.Transparent,
                 errorIndicatorColor = Color.Transparent,
@@ -140,23 +169,14 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
             shape = RoundedCornerShape(24.dp)
         )
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp), Arrangement.SpaceBetween, Alignment.CenterVertically
-        ) {
+        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
             ButtonText("Фотографии")
             CustomTextButton("Добавить", color = MaterialTheme.colorScheme.primary) {
                 galleryLauncher.launch("image/*")
             }
         }
 
-        BoxWithConstraints(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
             LazyRow(
                 Modifier
                     .fillMaxWidth(),
@@ -176,16 +196,28 @@ fun AddIncidentScreen(navigateBack: () -> Unit, viewModel: MapViewModel = koinIn
         }
 
         Spacer(Modifier.weight(1f))
-        FilledColorButton(
-            "Добавить", modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Toast.makeText(context, "Сообщение о происшествии отправлено", Toast.LENGTH_SHORT).show()
+        FilledColorButton("Добавить", modifier = Modifier.fillMaxWidth()) {
+            Toast.makeText(context, "Сообщение о происшествии отправлено", Toast.LENGTH_SHORT)
+                .show()
             navigateBack()
+            addIncidentViewModel.addIncident(
+                IncidentRequest(
+                    descriptionState.value,
+                    viewModel.getType()?.id ?: 1,
+                    viewModel.currentLocation?.latitude ?: 159.0,
+                    viewModel.currentLocation?.longitude ?: 56.0,
+                    viewModel.getLevel()?.id ?: 1,
+                ),
+                viewModel.photos.toList().firstOrNull()?.let { readBytes(context, it) }
+                    ?: ByteArray(0)
+            )
         }
     }
 }
+
+@Throws(IOException::class)
+private fun readBytes(context: Context, uri: Uri): ByteArray? =
+    context.contentResolver.openInputStream(uri)?.use { it.buffered().readBytes() }
 
 @Composable
 fun SelectVariantTextField(
@@ -195,15 +227,16 @@ fun SelectVariantTextField(
     suggestions: List<String>
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val icon = if (expanded) painterResource(R.drawable.chevron_down) else painterResource(R.drawable.chevron_up)
+    val icon =
+        if (expanded) painterResource(R.drawable.chevron_down) else painterResource(R.drawable.chevron_up)
     var textfieldSize by remember { mutableStateOf(Size.Zero) }
     Box(
         Modifier
-            .padding(horizontal = 18.dp)
             .background(
                 color = Color(0xFFFFFFFF),
                 shape = RoundedCornerShape(size = 24.dp)
             )
+            .animateContentSize()
     ) {
         TextField(
             value = selectedText,
@@ -242,7 +275,11 @@ fun SelectVariantTextField(
                 modifier = Modifier
                     .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
                     .background(color = MaterialTheme.colorScheme.surface)
-                    .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                    .shadow(
+                        elevation = 24.dp,
+                        spotColor = Color(0x0D000000),
+                        ambientColor = Color(0x0D000000)
+                    )
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 suggestions.forEach { label ->
@@ -253,7 +290,11 @@ fun SelectVariantTextField(
                         ButtonText(text = label)
                     }, modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.surface)
-                        .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+                        .shadow(
+                            elevation = 24.dp,
+                            spotColor = Color(0x0D000000),
+                            ambientColor = Color(0x0D000000)
+                        )
                         .clip(RoundedCornerShape(24.dp))
                     )
                 }

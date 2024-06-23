@@ -1,14 +1,45 @@
 package ru.skittens.goroute.ui.screens.tourist.permission
 
-import android.widget.Toast
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRightAlt
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.CalendarViewMonth
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,24 +58,60 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import org.koin.compose.koinInject
 import ru.skittens.goroute.R
-import ru.skittens.goroute.ui.elements.*
+import ru.skittens.goroute.ui.elements.BodyText
+import ru.skittens.goroute.ui.elements.ButtonText
+import ru.skittens.goroute.ui.elements.CaptionText
+import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
 import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
 import ru.skittens.goroute.ui.screens.start.onboarding.FilledColorButton
 import ru.skittens.goroute.ui.screens.tourist.addincident.SelectVariantTextField
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
-
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun PermissionScreen(navigateTo: NavigationFun) {
+fun PermissionScreen(
+    navigateTo: NavigationFun,
+    popBackStack: () -> Unit,
+    viewModel: MapViewModel = koinInject()
+) {
+    val route by viewModel.currentRoute.collectAsState(null)
+    val selectedTypePermission by viewModel.typePermissionFlow.collectAsState()
+    val typePermissionList by viewModel.typePermissionListFlow.collectAsState()
+    val dateStart by viewModel.dateStartFlow.collectAsState()
+    val dateEnd by viewModel.dateEndFlow.collectAsState()
+    val selectedGroup by viewModel.groupFlow.collectAsState()
+    val groupList by viewModel.groupListFlow.collectAsState()
+    val selectedLeaderGroup by viewModel.leaderGroupFlow.collectAsState()
+    val leaderGroupList by viewModel.leaderGroupListFlow.collectAsState()
+    val selectedTypeWay by viewModel.typeWayFlow.collectAsState()
+    val typeWayList by viewModel.typeWayListFlow.collectAsState()
+    val selectedTargetVisit by viewModel.targetVisitFlow.collectAsState()
+    val targetVisitList by viewModel.targetVisitListFlow.collectAsState()
+
+    var isDateStart by remember { mutableStateOf(true) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    if (showDatePicker) {
+        MyDatePickerDialog(
+            onDateSelected = {
+                if (isDateStart)
+                    viewModel.setDateStart(it)
+                else
+                    viewModel.setDateEnd(it)
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,11 +123,7 @@ fun PermissionScreen(navigateTo: NavigationFun) {
                 .fillMaxWidth()
                 .aspectRatio(4f)
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-            ) {
+            Box(Modifier.fillMaxWidth()) {
                 Image(
                     painter = painterResource(id = R.drawable.backgroung_onboarding),
                     null,
@@ -68,10 +131,6 @@ fun PermissionScreen(navigateTo: NavigationFun) {
                     alpha = 0.4f,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(
-                            color = Color(0xFFFFF0C3),
-                            shape = RoundedCornerShape(size = 24.dp)
-                        )
                         .shadow(
                             elevation = 24.dp,
                             spotColor = Color(0x0D000000),
@@ -82,17 +141,24 @@ fun PermissionScreen(navigateTo: NavigationFun) {
                 )
                 Column {
                     Column {
-                        Row(Modifier
-                            .fillMaxWidth()) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                        ) {
                             Image(
                                 painter = painterResource(R.drawable.tree),
                                 null,
                                 Modifier.padding(top = 18.dp, start = 16.dp)
                             )
                             Spacer(Modifier.width(6.dp))
-                            CaptionText("Природный парк Налычево", Modifier.padding(top = 18.dp), color = Color(0xFF01A451),)
+                            CaptionText(
+                                "Природный парк ${viewModel.topBarValue}",
+                                Modifier.padding(top = 18.dp),
+                                color = Color(0xFF01A451),
+                            )
                             Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = { navigateTo(Destinations.SelectRoute) },
+                            IconButton(
+                                onClick = popBackStack,
                             ) {
                                 Image(
                                     painter = painterResource(R.drawable.edit),
@@ -100,163 +166,191 @@ fun PermissionScreen(navigateTo: NavigationFun) {
                                 )
                             }
                         }
-                        TitleText("Центральный — Аагские нарзаны", textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 0.dp, start = 16.dp))
+                        TitleText(
+                            route?.name.orEmpty(), textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 0.dp, start = 16.dp)
+                        )
                     }
                     Spacer(Modifier.weight(1f))
                 }
             }
         }
         Spacer(Modifier.height(12.dp))
-        DropdownTextField("Тип разрешения")
+        SelectVariantTextField(
+            "Тип разрешения",
+            selectedTypePermission,
+            viewModel::setTypePermission,
+            typePermissionList
+        )
         Spacer(Modifier.height(12.dp))
-
         Row(
             Modifier.fillMaxWidth(),
-            Arrangement.SpaceEvenly,
+            Arrangement.spacedBy(12.dp),
             Alignment.CenterVertically
-        ){
-            Box(Modifier.weight(1f)){
-                OutLineDateField("Прибытие")
+        ) {
+            DateField("Прибытие", dateStart) {
+                isDateStart = true
+                showDatePicker = true
             }
-            Spacer(Modifier.width(12.dp))
-            Box(Modifier.weight(1f)){
-                OutLineDateField("Отбытие")
+
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowRightAlt,
+                null,
+                tint = Color(0x80000000)
+            )
+
+            DateField("Отбытие", dateEnd) {
+                isDateStart = false
+                showDatePicker = true
             }
         }
-
 
         Spacer(Modifier.height(18.dp))
         HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
         Spacer(Modifier.height(12.dp))
 
-        Row(Modifier.fillMaxWidth().padding(18.dp, 0.dp, 0.dp, 0.dp,),
-            Arrangement.SpaceBetween, Alignment.CenterVertically) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp, 0.dp, 0.dp, 0.dp),
+            Arrangement.SpaceBetween, Alignment.CenterVertically
+        ) {
             TitleText("Группа")
             CustomTextButton("создать новую", color = MaterialTheme.colorScheme.primary) {
                 navigateTo(Destinations.AddGroup)
             }
         }
-        DropdownTextField("Выберите группу")
+        SelectVariantTextField(
+            "Выберите группу",
+            selectedGroup,
+            viewModel::setGroup,
+            groupList
+        )
 
-        Row(Modifier.fillMaxWidth().padding(18.dp, 12.dp, 0.dp, 0.dp,),) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp, 12.dp, 0.dp, 0.dp),
+        ) {
             TitleText("Руководитель")
         }
         Spacer(Modifier.height(6.dp))
-        DropdownTextField("Выберите пользователя")
+        SelectVariantTextField(
+            "Выберите пользователя",
+            selectedLeaderGroup,
+            viewModel::setLeaderGroup,
+            leaderGroupList
+        )
 
         Spacer(Modifier.height(18.dp))
         HorizontalDivider(color = Color(0x1A000000), thickness = 1.dp)
         Spacer(Modifier.height(12.dp))
 
-        Row(Modifier.fillMaxWidth().padding(18.dp, 12.dp, 0.dp, 0.dp,),) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp, 12.dp, 0.dp, 0.dp),
+        ) {
             TitleText("Дополнительная информация")
         }
         Spacer(Modifier.height(12.dp))
-        DropdownTextField("Способ перемещения")
+        SelectVariantTextField(
+            "Способ перемещения",
+            selectedTypeWay,
+            viewModel::setTypeWay,
+            typeWayList
+        )
         Spacer(Modifier.height(12.dp))
-        DropdownTextField("Цель посещения")
+        SelectVariantTextField(
+            "Цель посещения",
+            selectedTargetVisit,
+            viewModel::setTargetVisit,
+            targetVisitList
+        )
 
         Spacer(Modifier.height(24.dp))
 
-        FilledColorButton(
-            "Отправить заявку", modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp)
-        ) {
+        FilledColorButton("Отправить заявку", modifier = Modifier.fillMaxWidth()) {
 
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun OutLineDateField(title: String) {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    TextField(
-        value = text,
-        maxLines = 1,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        onValueChange = { text = it },
-        label = { BodyText(text = title, textAlign = TextAlign.Center,) },
-        leadingIcon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = "Календарь") },
-        shape = RoundedCornerShape(size = 24.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            cursorColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            focusedPrefixColor = MaterialTheme.colorScheme.primary,
-            focusedSuffixColor = MaterialTheme.colorScheme.primary,
-        ),
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .shadow(
-                elevation = 24.dp,
-                spotColor = Color(0x0D000000),
-                ambientColor = Color(0x0D000000)
-            )
-            .background(color = Color(0xFFFFF0C3), shape = RoundedCornerShape(size = 24.dp))
-            .clip(RoundedCornerShape(size = 24.dp))
-    )
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropdownTextField(title: String){
-    var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Индивидуальный поход","Групповой поход","Юридическое лицо")
-    var selectedText by remember { mutableStateOf("") }
-    var textfieldSize by remember { mutableStateOf(Size.Zero)}
-    val icon = if (expanded)
-        painterResource(R.drawable.chevron_down)
-    else
-        painterResource(R.drawable.chevron_up)
-    Box() {
-        TextField(
-            value = selectedText,
-            onValueChange = { selectedText = it },
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
+fun RowScope.DateField(title: String, value: String, onClick: () -> Unit) {
+    Card(
+        onClick,
+        Modifier.weight(1f),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(Color.White)
+    ) {
+        Row(
+            Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    textfieldSize = coordinates.size.toSize()
-                }
-                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 24.dp))
-                .clip(RoundedCornerShape(size = 24.dp)),
-
-            label = { BodyText(title, textAlign = TextAlign.Center,) },
-            trailingIcon = {
-                Icon(icon,"contentDescription",
-                    Modifier.clickable { expanded = !expanded })
-            }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .width(with(LocalDensity.current){textfieldSize.width.toDp()})
+                .padding(16.dp, 8.dp)
+                .minimumInteractiveComponentSize()
+                .animateContentSize(),
+            Arrangement.spacedBy(8.dp),
+            Alignment.CenterVertically
         ) {
-            suggestions.forEach { label ->
-                DropdownMenuItem(onClick = {
-                    selectedText = label
-                    expanded = false
-                }, text = {
-                    ButtonText(text = label)
-                }, modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface)
-                    .shadow(
-                        elevation = 24.dp,
-                        spotColor = Color(0x0D000000),
-                        ambientColor = Color(0x0D000000)
-                    )
-                    .clip(RoundedCornerShape(24.dp)))
+            Icon(Icons.Outlined.CalendarMonth, contentDescription = "Календарь")
+            Column(verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically)) {
+                CaptionText(
+                    text = title,
+                    color = if (value.isEmpty())
+                        MaterialTheme.colorScheme.onBackground
+                    else
+                        MaterialTheme.colorScheme.primary
+                )
 
+                if (value.isNotEmpty())
+                    ButtonText(text = value)
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyDatePickerDialog(
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
+        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+            return utcTimeMillis <= System.currentTimeMillis()
+        }
+    })
+
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        convertMillisToDate(it)
+    } ?: ""
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(selectedDate)
+                onDismiss()
+            }
+
+            ) {
+                Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text(text = "Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+private fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return formatter.format(Date(millis))
 }

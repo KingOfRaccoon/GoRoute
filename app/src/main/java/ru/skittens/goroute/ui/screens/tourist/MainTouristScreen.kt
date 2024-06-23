@@ -43,7 +43,7 @@ import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
-import ru.skittens.goroute.ui.screens.start.route.RouteScreen
+import ru.skittens.goroute.ui.screens.tourist.route.RouteScreen
 import ru.skittens.goroute.ui.screens.tourist.addgroup.AddGroupScreen
 import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentScreen
 import ru.skittens.goroute.ui.screens.tourist.endedroutes.EndedRoutesScreen
@@ -120,7 +120,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
     ) {
         NavHost(
             navHostController,
-            Destinations.Map.name,
+            Destinations.Routes.name,
             Modifier
                 .fillMaxSize()
                 .padding(it)
@@ -158,7 +158,6 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.AddGroup) {
-                // TODO это экран добавления группы
                 AddGroupScreen(navHostController::navigate)
             }
 
@@ -167,7 +166,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
             }
 
             composable(Destinations.Permission) {
-                PermissionScreen(navHostController::navigate)
+                PermissionScreen(navHostController::navigate, navHostController::popBackStack)
             }
 
             composable(Destinations.AddIncident) {

@@ -46,12 +46,7 @@ class GetRoutesForChooseUseCase(
                             if (points.isNotEmpty())
                                 routeLengthMapFlow.update {
                                     it.copy(
-                                        (it.map + (route.id to haversine(
-                                            points.first()[1],
-                                            points.first()[0],
-                                            points.last()[1],
-                                            points.last()[0]
-                                        ))).toMutableMap()
+                                        (it.map + (route.id to haversineAll(points))).toMutableMap()
                                     )
                                 }
                         })
@@ -68,12 +63,7 @@ class GetRoutesForChooseUseCase(
                             if (points.isNotEmpty())
                                 routeLengthMapFlow.update {
                                     it.copy(
-                                        (it.map + (route.id to haversine(
-                                            points.first()[1],
-                                            points.first()[0],
-                                            points.last()[1],
-                                            points.last()[0]
-                                        ))).toMutableMap()
+                                        (it.map + (route.id to haversineAll(points))).toMutableMap()
                                     )
                                 }
                         })
@@ -103,7 +93,18 @@ class GetRoutesForChooseUseCase(
 
     suspend fun loadRoutes() = parkRepository.getRoutes(userRepository.getToken().orEmpty())
 
-    fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    private fun haversineAll(points: List<List<Double>>): Double {
+        var sum = 0.0
+        for (i in 0 until points.lastIndex){
+            val currentPoint = points[i]
+            val nextPoint = points[i+1]
+            sum += haversine(currentPoint[1], currentPoint[0], nextPoint[1], nextPoint[0])
+        }
+
+        return sum.toBigDecimal().setScale(1, RoundingMode.DOWN).toDouble()
+    }
+
+    private fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val R = 6371.0 // Радиус Земли в километрах
 
         // Преобразование градусов в радианы
@@ -121,6 +122,6 @@ class GetRoutesForChooseUseCase(
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         // Расстояние
-        return (R * c).toBigDecimal().setScale(1, RoundingMode.DOWN).toDouble()
+        return (R * c)
     }
 }

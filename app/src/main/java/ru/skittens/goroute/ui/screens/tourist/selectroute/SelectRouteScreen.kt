@@ -51,6 +51,7 @@ import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
+import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.map.RouteMapItem
 import java.util.Locale
 
@@ -58,7 +59,8 @@ import java.util.Locale
 @Composable
 fun SelectRouteScreen(
     navigateTo: NavigationFun,
-    selectRouteViewModel: SelectRouteViewModel = koinInject()
+    selectRouteViewModel: SelectRouteViewModel = koinInject(),
+    mapViewModel: MapViewModel = koinInject()
 ) {
     val routes by selectRouteViewModel.routes.collectAsState(Resource.Loading())
 
@@ -95,7 +97,12 @@ fun SelectRouteScreen(
 
         items(
             routes.data.orEmpty(),
-            key = { it.id }) { RouteItem(it) { navigateTo(Destinations.Route) } }
+            key = { it.id }) {
+            RouteItem(it) {
+                mapViewModel.setRouteId(it.id)
+                navigateTo(Destinations.Permission)
+            }
+        }
     }
 }
 

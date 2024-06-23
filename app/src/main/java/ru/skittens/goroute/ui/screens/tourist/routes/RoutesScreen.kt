@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -34,15 +35,25 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import ru.skittens.goroute.ui.elements.BigTitleText
 import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.NavigationFun
 import ru.skittens.goroute.ui.screens.start.onboarding.CustomTextButton
+import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @Composable
-fun RoutesScreen(navigateTo: NavigationFun) {
+fun RoutesScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject()) {
+    LaunchedEffect(Unit) {
+        viewModel.loadParksAndAreas()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadRoutes()
+    }
+
     LazyColumn(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -57,7 +68,11 @@ fun RoutesScreen(navigateTo: NavigationFun) {
                 Modifier.padding(horizontal = 18.dp),
                 shape = RoundedCornerShape(24.dp)
             ) {
-                Box(Modifier.fillMaxWidth().aspectRatio(2.5f).background(Color.LightGray)) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(2.5f)
+                        .background(Color.LightGray)) {
                     BlurredChip(Modifier.align(Alignment.Center)) {
                         TextButton({ navigateTo(Destinations.NewRoute) }) {
                             Icon(
@@ -84,7 +99,9 @@ fun RoutesScreen(navigateTo: NavigationFun) {
 
         item {
             Row(
-                Modifier.fillMaxWidth().padding(horizontal = 36.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 36.dp),
                 Arrangement.SpaceBetween,
                 Alignment.CenterVertically
             ) {
@@ -125,13 +142,20 @@ fun GroupCard(nameGroup: String, onClick: () -> Unit) {
 fun NavigateCard(onClick: () -> Unit, content: @Composable RowScope.() -> Unit) {
     Card(
         onClick,
-        Modifier.fillMaxWidth()
-            .shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
+        Modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 24.dp,
+                spotColor = Color(0x0D000000),
+                ambientColor = Color(0x0D000000)
+            )
             .padding(horizontal = 18.dp),
         shape = RoundedCornerShape(24.dp),
     ) {
         Row(
-            Modifier.fillMaxWidth().padding(18.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             content()

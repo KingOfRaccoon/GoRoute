@@ -9,13 +9,16 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import ru.skittens.data.manager.TokenManager
+import ru.skittens.data.repository.HikeRepositoryImpl
 import ru.skittens.data.repository.IncidentRepositoryImpl
 import ru.skittens.data.repository.ParkRepositoryImpl
 import ru.skittens.data.repository.UserRepositoryImpl
 import ru.skittens.data.source.network.authentication.UserService
+import ru.skittens.data.source.network.hike.HikeService
 import ru.skittens.data.source.network.incidents.IncidentsService
 import ru.skittens.data.source.network.parks.ParkService
 import ru.skittens.data.util.Postman
+import ru.skittens.domain.repository.HikeRepository
 import ru.skittens.domain.repository.IncidentRepository
 import ru.skittens.domain.repository.ParkRepository
 import ru.skittens.domain.repository.UserRepository
@@ -24,6 +27,7 @@ import ru.skittens.goroute.ui.screens.employee.allincidents.AllIncidentsViewMode
 import ru.skittens.goroute.ui.screens.start.AuthenticationViewModel
 import ru.skittens.goroute.ui.screens.start.authentication.getScreenSize
 import ru.skittens.goroute.ui.screens.start.onboarding.OnboardingViewModel
+import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentViewModel
 import ru.skittens.goroute.ui.screens.tourist.filterroutes.FilterRoutesViewModel
 import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 import ru.skittens.goroute.ui.screens.tourist.selectroute.SelectRouteViewModel
@@ -36,11 +40,13 @@ class RouteApp : Application() {
         single { UserService(get()) }
         single { ParkService(get()) }
         single { IncidentsService(get()) }
+        single { HikeService(get()) }
 
         single { TokenManager(this@RouteApp) }
         single<UserRepository> { UserRepositoryImpl(get(), get()) }
         single<ParkRepository> { ParkRepositoryImpl(get()) }
         single<IncidentRepository> { IncidentRepositoryImpl(get()) }
+        single<HikeRepository> { HikeRepositoryImpl(get()) }
         single<FusedLocationProviderClient> { LocationServices.getFusedLocationProviderClient(this@RouteApp) }
         single<LocationTracker> {DefaultLocationTracker(get(), this@RouteApp)}
 
@@ -54,13 +60,17 @@ class RouteApp : Application() {
         single { UserDataUseCase(get()) }
         single { IncidentsUseCase(get(), get()) }
         single { GetFilterAreasUseCase(get()) }
+        single { GetSelectedRouteUseCase(get()) }
+        single { CreatePermissionUseCase() }
+        single { GetHikeUseCase(get(), get()) }
 
         single { SelectRouteViewModel(get()) }
         single { OnboardingViewModel() }
         single { AuthenticationViewModel(get()) }
-        single { MapViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        single { MapViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
         single { AllIncidentsViewModel(get()) }
         single { FilterRoutesViewModel(get()) }
+        single { AddIncidentViewModel(get()) }
     }
 
     override fun onCreate() {

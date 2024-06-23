@@ -200,8 +200,9 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
             parks.data?.find { getParkIdOnAreaId(currentId) == it.id }?.let { park ->
                 AreaBottomSheet(areaBottomSheetState, area, park, {
                     state.setCameraOptions {
-                        center(calculatePolygonCenter(area.getGeometryData().areas.map { it.coordinates }
-                            .flatten().map { it.map { Point.fromLngLat(it[0], it[1]) } })
+                        center(
+                            calculatePolygonCenter(area.getGeometryData().areas.map { it.coordinates }
+                                .flatten().map { it.map { Point.fromLngLat(it[0], it[1]) } })
                         ).build()
                     }
                 }, { id, name ->
@@ -296,10 +297,10 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
                 { state.setCameraOptions { zoom((state.cameraState?.zoom ?: 1.0) + 1.0) } },
                 colors = IconButtonDefaults.iconButtonColors(Color(0xD9FFFFFF)),
                 modifier = Modifier.shadow(
-                        elevation = 16.dp,
-                        spotColor = Color(0x1F000000),
-                        ambientColor = Color(0x1F000000)
-                    )
+                    elevation = 16.dp,
+                    spotColor = Color(0x1F000000),
+                    ambientColor = Color(0x1F000000)
+                )
             ) {
                 Icon(Icons.Default.Add, null, tint = Color.Black)
             }
@@ -307,10 +308,10 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
                 { state.setCameraOptions { zoom((state.cameraState?.zoom ?: 1.0) - 1.0) } },
                 colors = IconButtonDefaults.iconButtonColors(Color(0xD9FFFFFF)),
                 modifier = Modifier.shadow(
-                        elevation = 16.dp,
-                        spotColor = Color(0x1F000000),
-                        ambientColor = Color(0x1F000000)
-                    )
+                    elevation = 16.dp,
+                    spotColor = Color(0x1F000000),
+                    ambientColor = Color(0x1F000000)
+                )
             ) {
                 Icon(Icons.Default.Remove, null, tint = Color.Black)
             }
@@ -527,14 +528,16 @@ fun TextSwitch(
                     }
                 }) {
                 items.forEachIndexed { index, text ->
-                    Box(modifier = Modifier
-                        .width(tabWidth)
-                        .fillMaxHeight()
-                        .clickable(interactionSource = remember {
-                            MutableInteractionSource()
-                        }, indication = null, onClick = {
-                            onSelectionChange(index)
-                        }), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .width(tabWidth)
+                            .fillMaxHeight()
+                            .clickable(interactionSource = remember {
+                                MutableInteractionSource()
+                            }, indication = null, onClick = {
+                                onSelectionChange(index)
+                            }), contentAlignment = Alignment.Center
+                    ) {
                         ButtonText(text)
                     }
                 }
@@ -727,33 +730,44 @@ fun AreaBottomSheet(
 
             item {
                 ExpandCard({ TitleText("Контактная информация") }) {
-                    Column(Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp), Arrangement.spacedBy(12.dp)) {
-                        InfoItem(
-                            icon = Icons.Default.PhoneInTalk,
-                            title = "Телефон:",
-                            values = listOf("+7 (943)-879-98-34", "+7 (943)-879-98-36")
-                        )
-                        InfoItem(
-                            icon = Icons.Default.Event,
-                            title = "График работы:",
-                            values = listOf("ПН-ПТ с 8:00 до 19:00")
-                        )
-                        InfoItem(icon = Icons.Default.Language,
-                            annotatedString = buildAnnotatedString {
-                                withStyle(
-                                    style = SpanStyle(
-                                        textDecoration = TextDecoration.Underline
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (park.parkContacts.isNotEmpty())
+                            InfoItem(
+                                icon = Icons.Default.PhoneInTalk,
+                                title = "Телефон:",
+                                values = park.parkContacts.map { it.phone }
+                            )
+
+                        if (park.workingTime != null)
+                            InfoItem(
+                                icon = Icons.Default.Event,
+                                title = "График работы:",
+                                values = listOf(park.workingTime.orEmpty())
+                            )
+
+                        if (park.siteUrl != null)
+                            InfoItem(icon = Icons.Default.Language,
+                                annotatedString = buildAnnotatedString {
+                                    withStyle(
+                                        style = SpanStyle(
+                                            textDecoration = TextDecoration.Underline
+                                        )
+                                    ) {
+                                        append("Официальный сайт")
+                                    }
+
+                                    addStringAnnotation(
+                                        tag = URL_TAG,
+                                        annotation = park.siteUrl.orEmpty(),
+                                        start = 0,
+                                        end = 15
                                     )
-                                ) {
-                                    append("Официальный сайт")
-                                }
-                                addStringAnnotation(
-                                    tag = "URL",
-                                    annotation = "https://text.ru/seo",
-                                    start = 0,
-                                    end = 15
-                                )
-                            })
+                                })
                     }
                 }
             }
@@ -912,7 +926,6 @@ fun ExpandCard(
             }
         }
         AnimatedVisibility(visible = isExpand) {
-            Spacer(modifier = Modifier.height(12.dp))
             expandContent(isExpand)
         }
     }

@@ -2,6 +2,7 @@ package ru.skittens.domain.usecase
 
 import ru.skittens.domain.entity.EmployeeStatus
 import ru.skittens.domain.entity.Incident
+import ru.skittens.domain.entity.IncidentRequest
 import ru.skittens.domain.entity.Status
 import ru.skittens.domain.repository.IncidentRepository
 import ru.skittens.domain.repository.UserRepository
@@ -16,8 +17,8 @@ class IncidentsUseCase(
         incidentRepository.loadIncidents(userRepository.getToken().orEmpty())
     }
 
-    suspend fun addIncident(incident: Incident) =
-        incidentRepository.addIncident(incident, userRepository.getToken().orEmpty())
+    suspend fun addIncident(incident: IncidentRequest, file: ByteArray) =
+        incidentRepository.addIncident(incident, file, userRepository.getToken().orEmpty())
 
     suspend fun updateStatus(status: Status) =
         incidentRepository.updateStatus(status, userRepository.getToken().orEmpty())

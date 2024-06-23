@@ -55,6 +55,7 @@ import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Layers
@@ -207,7 +208,7 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
                     viewModel.setAreaId(id)
                     viewModel.topBarValue = name
                     navigateTo(Destinations.SelectRoute)
-                }) {
+                }, navigateTo) {
                     isShowArea = false
                     coroutineScope.launch {
                         areaBottomSheetState.hide()
@@ -317,7 +318,7 @@ fun MapScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject())
         ExtendedFloatingActionButton(
             onClick = { navigateTo(Destinations.AddIncident) },
             icon = { Icon(Icons.Outlined.EmojiPeople, null, tint = Color.Black) },
-            text = { BodyText(text = "Сообщить об ошибке", color = Color.Black) },
+            text = { BodyText(text = "Сообщить о проблеме", color = Color.Black) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -550,6 +551,7 @@ fun AreaBottomSheet(
     park: Park,
     centerOnArea: () -> Unit,
     openRoutes: (String, String) -> Unit,
+    navigateTo: NavigationFun,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -561,7 +563,7 @@ fun AreaBottomSheet(
         dragHandle = null
     ) {
         val carouselPager = rememberPagerState { 2 }
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.background(Color.White)) {
             stickyHeader {
                 Box {
                     HorizontalPager(carouselPager) {
@@ -659,7 +661,7 @@ fun AreaBottomSheet(
                         .fillMaxWidth()
                         .padding(18.dp, 0.dp)
                 ) {
-
+                    openRoutes(area.id, area.name)
                 }
             }
 
@@ -725,19 +727,17 @@ fun AreaBottomSheet(
 
             item {
                 ExpandCard({ TitleText("Контактная информация") }) {
-                    Column(Modifier.fillMaxWidth(), Arrangement.spacedBy(12.dp)) {
+                    Column(Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp), Arrangement.spacedBy(12.dp)) {
                         InfoItem(
                             icon = Icons.Default.PhoneInTalk,
                             title = "Телефон:",
                             values = listOf("+7 (943)-879-98-34", "+7 (943)-879-98-36")
                         )
-
                         InfoItem(
                             icon = Icons.Default.Event,
                             title = "График работы:",
                             values = listOf("ПН-ПТ с 8:00 до 19:00")
                         )
-
                         InfoItem(icon = Icons.Default.Language,
                             annotatedString = buildAnnotatedString {
                                 withStyle(
@@ -747,7 +747,6 @@ fun AreaBottomSheet(
                                 ) {
                                     append("Официальный сайт")
                                 }
-
                                 addStringAnnotation(
                                     tag = "URL",
                                     annotation = "https://text.ru/seo",
@@ -765,7 +764,7 @@ fun AreaBottomSheet(
                         .fillMaxWidth()
                         .padding(18.dp, 0.dp)
                 ) {
-
+                    openRoutes(area.id, area.name)
                 }
             }
         }
@@ -904,7 +903,7 @@ fun ExpandCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    Icons.Default.KeyboardArrowUp,
+                    Icons.Default.KeyboardArrowDown,
                     null,
                     Modifier.graphicsLayer(rotationX = rotationAngle)
                 )

@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.asImageBitmap
@@ -163,10 +164,10 @@ fun FilledColorButton(
     onClick: () -> Unit
 ) {
     FilledTonalButton(
-        onClick,
-        modifier.fillMaxWidth(),
+        onClick, modifier.fillMaxWidth().shadow(elevation = 24.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000)),
         colors = ButtonDefaults.filledTonalButtonColors(colorButton),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
+
     ) {
         ButtonText(
             text,

@@ -43,6 +43,7 @@ import ru.skittens.goroute.ui.elements.TitleText
 import ru.skittens.goroute.ui.navigation.Destinations
 import ru.skittens.goroute.ui.navigation.composable
 import ru.skittens.goroute.ui.navigation.navigate
+import ru.skittens.goroute.ui.screens.start.route.RouteScreen
 import ru.skittens.goroute.ui.screens.tourist.addgroup.AddGroupScreen
 import ru.skittens.goroute.ui.screens.tourist.addincident.AddIncidentScreen
 import ru.skittens.goroute.ui.screens.tourist.endedroutes.EndedRoutesScreen
@@ -128,6 +129,10 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
                 RoutesScreen(navHostController::navigate)
             }
 
+            composable(Destinations.Route){
+                RouteScreen(navHostController::navigate)
+            }
+
             composable(Destinations.NewRoute) {
                 NewRouteScreen(navHostController::navigate)
             }
@@ -180,7 +185,7 @@ fun MainTouristScreen(viewModel: MapViewModel = koinInject()) {
 fun MainTopBar(destinations: Destinations, topBarValue: String, onBackStack: () -> Unit) {
 //    AnimatedContent(destinations) {
     when (destinations) {
-        Destinations.Group, Destinations.FiltersRoutes, Destinations.Permission, Destinations.AddIncident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.AddGroup -> {
+        Destinations.Group, Destinations.FiltersRoutes, Destinations.Permission, Destinations.AddIncident, Destinations.NewRoute, Destinations.EndedRoutes, Destinations.SelectRoute, Destinations.SelectParkOrSight, Destinations.Route, Destinations.AddGroup -> {
             BackTopBar(destinations, topBarValue, onBackStack)
         }
 

@@ -95,7 +95,7 @@ fun SelectRouteScreen(
 
         items(
             routes.data.orEmpty(),
-            key = { it.id }) { RouteItem(it) { navigateTo(Destinations.Permission) } }
+            key = { it.id }) { RouteItem(it) { navigateTo(Destinations.Route) } }
     }
 }
 
@@ -115,7 +115,7 @@ fun RouteItem(route: Route, onClick: () -> Unit) {
             .aspectRatio(1.5f)
             .padding(vertical = 6.dp, horizontal = 18.dp)
             .shadow(
-                elevation = 24.dp,
+                elevation = 16.dp,
                 spotColor = Color(0x0D000000),
                 ambientColor = Color(0x0D000000)
             )

@@ -9,6 +9,7 @@ enum class Destinations(val title: String? = "") {
     MainAdmin,
     MainTourist,
     Routes,
+    Route("Маршрут"),
     NewRoute("Новый поход"),
     EndedRoutes,
     SelectRoute(null),

@@ -9,7 +9,7 @@ class GetHikeUseCase(
 ) {
     val hikesUserFlow = hikeRepository.groupsUserFlow
 
-    suspend operator fun invoke(idUser: Int) {
-        hikeRepository.loadGroup(idUser, userRepository.getToken().orEmpty())
+    suspend operator fun invoke() {
+        hikeRepository.loadGroup(userRepository.userFlow.value.data?.id ?: 12, userRepository.getToken().orEmpty())
     }
 }

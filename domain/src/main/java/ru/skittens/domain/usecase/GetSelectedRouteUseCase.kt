@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.update
 import ru.skittens.domain.repository.ParkRepository
 
 class GetSelectedRouteUseCase(private val parkRepository: ParkRepository) {
-    private val selectedRouteId = MutableStateFlow(-1)
+    val selectedRouteId = MutableStateFlow(-1)
     val selectedRoute = combine(parkRepository.routesFlow, selectedRouteId){ routes, selectedId ->
         routes.data?.find { it.id == selectedId }
     }

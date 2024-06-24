@@ -61,7 +61,7 @@ class RouteApp : Application() {
         single { IncidentsUseCase(get(), get()) }
         single { GetFilterAreasUseCase(get()) }
         single { GetSelectedRouteUseCase(get()) }
-        single { CreatePermissionUseCase() }
+        single { CreatePermissionUseCase(get(), get(), get()) }
         single { GetHikeUseCase(get(), get()) }
 
         single { SelectRouteViewModel(get()) }

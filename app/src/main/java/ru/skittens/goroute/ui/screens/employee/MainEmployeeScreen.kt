@@ -45,7 +45,7 @@ fun MainEmployeeScreen() {
 
     Scaffold(
         Modifier.fillMaxSize(),
-        topBar = { DefaultTopBarEmployee() },
+        topBar = { MainTopBarEmployee(currentDestinations, "", navHostController::popBackStack) },
         bottomBar = {
             AnimatedVisibility(
                 currentEntity?.destination?.route in EmployeeNavigationBarItem.entries.map { it.destinations.name },
@@ -115,7 +115,7 @@ fun MainTopBarEmployee(destinations: Destinations, topBarValue: String, onBackSt
             BackTopBar(destinations, topBarValue, onBackStack)
         }
 
-        Destinations.Profile, Destinations.Routes -> {
+        Destinations.Profile, Destinations.Routes, Destinations.AllIncidents -> {
             DefaultTopBar()
         }
 

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.update
 import ru.kingofraccoons.domain.util.Resource
 import ru.skittens.data.source.network.hike.HikeService
 import ru.skittens.domain.entity.Hike
+import ru.skittens.domain.entity.HikeGroupRequest
 import ru.skittens.domain.repository.HikeRepository
 
 class HikeRepositoryImpl(private val hikeService: HikeService): HikeRepository {
@@ -17,5 +18,9 @@ class HikeRepositoryImpl(private val hikeService: HikeService): HikeRepository {
         _groupsUserFlow.update {
             hikeService.getGroupsUser(idUser, token)
         }
+    }
+
+    override suspend fun addHikeGroup(hikeGroupRequest: HikeGroupRequest, token: String): Resource<String> {
+        return hikeService.addHikeGroup(hikeGroupRequest, token)
     }
 }

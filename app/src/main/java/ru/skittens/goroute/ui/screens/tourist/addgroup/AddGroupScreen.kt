@@ -101,7 +101,7 @@ fun AddGroupScreen(navigateTo: NavigationFun) {
         Spacer(Modifier.height(12.dp))
         Row(modifier = Modifier
             .padding(horizontal = 18.dp, vertical = 8.dp)
-            .clickable { TODO("To profile") }) {
+            .clickable {  }) {
             Text(text = "1", color = Color(0x80212121),)
             Spacer(Modifier.width(12.dp))
             ButtonText(text = "Андрей Маслов")

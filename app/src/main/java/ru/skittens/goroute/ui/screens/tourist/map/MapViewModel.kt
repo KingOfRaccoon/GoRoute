@@ -42,6 +42,7 @@ class MapViewModel(
     val currentIdFlow = getRoutesForSelectedAreaOrPark.selectedIdFlow
     val filtersFlow = getFilterAreasUseCase.filtersFlow
     val currentRoute = getSelectedRouteUseCase.selectedRoute
+    val hikeFlow = getHikeUseCase.hikesUserFlow
 
     // incident
     val levelsFlow = getLevelsUseCase.levels
@@ -92,6 +93,18 @@ class MapViewModel(
     fun loadLevels() {
         viewModelScope.launch(Dispatchers.IO) {
             getLevelsUseCase()
+        }
+    }
+
+    fun loadHikes(){
+        viewModelScope.launch(Dispatchers.IO) {
+            getHikeUseCase()
+        }
+    }
+
+    fun addHikeGroup(){
+        viewModelScope.launch(Dispatchers.IO) {
+            createPermissionUseCase(getSelectedRouteUseCase.selectedRouteId.value)
         }
     }
 

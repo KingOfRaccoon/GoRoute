@@ -54,6 +54,7 @@ fun AllIncidentsScreen(navigateTo: NavigationFun, viewModel: AllIncidentsViewMod
 
         items(incidents.data.orEmpty()) {
             Card(Modifier.fillMaxWidth().clickable {
+                viewModel.setSelectedId(it.id)
                 navigateTo(Destinations.Incident)
             }) {
                 Column(

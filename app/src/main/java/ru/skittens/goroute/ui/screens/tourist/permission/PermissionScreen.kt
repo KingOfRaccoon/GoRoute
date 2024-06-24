@@ -50,10 +50,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import org.koin.compose.koinInject
 import ru.skittens.goroute.R
-import ru.skittens.goroute.ui.elements.BodyText
 import ru.skittens.goroute.ui.elements.ButtonText
 import ru.skittens.goroute.ui.elements.CaptionText
 import ru.skittens.goroute.ui.elements.TitleText
@@ -261,7 +259,7 @@ fun PermissionScreen(
         Spacer(Modifier.height(24.dp))
 
         FilledColorButton("Отправить заявку", modifier = Modifier.fillMaxWidth()) {
-
+            viewModel.addHikeGroup()
         }
     }
 }
@@ -306,11 +304,7 @@ fun MyDatePickerDialog(
     onDateSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
-        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis <= System.currentTimeMillis()
-        }
-    })
+    val datePickerState = rememberDatePickerState()
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
         convertMillisToDate(it)
@@ -322,17 +316,15 @@ fun MyDatePickerDialog(
             Button(onClick = {
                 onDateSelected(selectedDate)
                 onDismiss()
-            }
-
-            ) {
-                Text(text = "OK")
+            }) {
+                ButtonText(text = "Ок", color = Color.White)
             }
         },
         dismissButton = {
             Button(onClick = {
                 onDismiss()
             }) {
-                Text(text = "Cancel")
+                ButtonText(text = "Отмена", color = Color.White)
             }
         }
     ) {

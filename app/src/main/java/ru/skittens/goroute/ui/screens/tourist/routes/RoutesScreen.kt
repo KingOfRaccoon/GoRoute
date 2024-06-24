@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
@@ -46,12 +48,18 @@ import ru.skittens.goroute.ui.screens.tourist.map.MapViewModel
 
 @Composable
 fun RoutesScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject()) {
+    val hikes by viewModel.hikeFlow.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.loadParksAndAreas()
     }
 
     LaunchedEffect(Unit) {
         viewModel.loadRoutes()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadHikes()
     }
 
     LazyColumn(
@@ -112,7 +120,7 @@ fun RoutesScreen(navigateTo: NavigationFun, viewModel: MapViewModel = koinInject
             }
         }
 
-        items(listOf("Семья Больных", "МегаСпортики")) {
+        items(listOf("Семья Больных", "Мегаспортики")) {
             GroupCard(it){
                 navigateTo(Destinations.Group)
             }

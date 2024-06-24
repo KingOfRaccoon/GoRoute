@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ParkPhoto(
     val id: Int,
-    val url: String? = null
+    val data: String
 )

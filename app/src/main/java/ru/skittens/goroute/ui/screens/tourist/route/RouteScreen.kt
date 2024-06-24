@@ -15,16 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,15 +32,11 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -149,123 +145,68 @@ fun RouteScreen(navigateTo: NavigationFun) {
             )
         }
         item {
-            Box(
-                modifier = Modifier
-                    .requiredWidth(width = 178.dp)
-                    .requiredHeight(height = 120.dp)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.route_start),
-                        contentDescription = "Frame 218",
-                        colorFilter = ColorFilter.tint(Color.White),
-                        modifier = Modifier
-                            .requiredSize(size = 32.dp)
-                            .clip(shape = RoundedCornerShape(24.dp))
-                            .padding(
-                                horizontal = 2.dp,
-                                vertical = 4.dp
-                            )
-                    )
-                    ButtonText(
-                        text = "Центральный",
-                        color = Color(0xff212121),
-                        modifier = Modifier
-                            .wrapContentHeight(align = Alignment.CenterVertically)
-                    )
-                }
-                Divider(
-                    color = Color(0xff01a451),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 15.dp,
-                            y = 32.dp
-                        )
-                        .requiredWidth(width = 60.dp)
-                        .rotate(degrees = -90f)
+                Image(
+                    painter = painterResource(id = R.drawable.route_start),
+                    contentDescription = "Frame 218"
                 )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically,
+                ButtonText(
+                    text = "Центральный",
+                    color = Color(0xff212121),
                     modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 0.dp,
-                            y = 88.dp
-                        )
-                ) {
-                    TextField(
-                        value = "",
-                        onValueChange = {},
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color(0xff01a451)
-                        ),
-                        modifier = Modifier
-                            .requiredSize(size = 32.dp)
-                            .clip(shape = RoundedCornerShape(24.dp))
-                            .padding(
-                                horizontal = 2.dp,
-                                vertical = 4.dp
-                            )
-                    )
-                    ButtonText(
-                        text = "Аагские нарзаны",
-                        color = Color(0xff212121),
-                        modifier = Modifier
-                            .wrapContentHeight(align = Alignment.CenterVertically)
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(22.dp, Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 10.dp,
-                            y = 50.dp
-                        )
-                        .requiredWidth(width = 141.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(
-                            3.75.dp,
-                            Alignment.CenterHorizontally
-                        ),
-                        verticalAlignment = Alignment.CenterVertically,
-                        content = {},
-                        modifier = Modifier
-                            .requiredSize(size = 12.dp)
-                            .clip(shape = RoundedCornerShape(9.dp))
-                            .background(color = Color(0xff01a451))
-                            .padding(
-                                horizontal = 0.7499998807907104.dp,
-                                vertical = 1.499999761581421.dp
-                            )
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CaptionText(
-                            text = "5 стоянок",
-                            color = Color(0xff212121).copy(alpha = 0.5f),
-                            modifier = Modifier
-                                .wrapContentHeight(align = Alignment.CenterVertically)
-                        )
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            null,
-                            Modifier.align(Alignment.CenterVertically),
-                            MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
+                        .wrapContentHeight(align = Alignment.CenterVertically)
+                )
             }
         }
+
+        items(
+            listOf(
+                "Палаточный лагерь-1",
+                "Палаточный лагерь-2",
+                "Обзорная точка",
+                "Споривная база “Авача”",
+                "Стоянка “Перевальная”"
+            )
+        ) {
+            BodyText(it, Modifier.padding(start = 44.dp))
+        }
+
+        item {
+            Row(
+                Modifier.padding(start = 44.dp),
+                Arrangement.spacedBy(4.dp),
+                Alignment.CenterVertically
+            ) {
+                BodyText("Свернуть", color = Color(0x80212121))
+                Icon(
+                    Icons.Default.KeyboardArrowUp,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.frame_82),
+                    contentDescription = "Frame 218"
+                )
+                ButtonText(
+                    text = "Аагские нарзаны",
+                    color = Color(0xff212121),
+                )
+            }
+        }
+
         item {
             FilledColorButton(
                 text = "Пойти в поход",
@@ -743,18 +684,13 @@ fun RouteScreen(navigateTo: NavigationFun) {
 @Composable
 fun ChipItem(text: String) {
     InputChip(
-        label = {
-            CaptionText(
-                text = text,
-                color = Color(0xff212121),
-                modifier = Modifier
-                    .wrapContentHeight(align = Alignment.CenterVertically)
-            )
-        },
+        label = { BodyText(text) },
+        border = null,
         shape = RoundedCornerShape(50.dp),
         colors = InputChipDefaults.inputChipColors(
             containerColor = Color(0x08212121),
         ),
-        selected = true,
-        onClick = { })
+        selected = false,
+        onClick = { }
+    )
 }

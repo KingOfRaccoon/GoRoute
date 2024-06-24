@@ -100,7 +100,7 @@ fun SelectRouteScreen(
             key = { it.id }) {
             RouteItem(it) {
                 mapViewModel.setRouteId(it.id)
-                navigateTo(Destinations.Permission)
+                navigateTo(Destinations.Route)
             }
         }
     }
